@@ -1,0 +1,11 @@
+{
+    "/api": {
+        "target" : "https://localhost:9443/api",
+        "secure" : false,
+        "changeOrigin" :true,
+        "pathRewrite": {
+            "^/api": ""
+          },
+        "logLeval" : "Dubeg"
+    }
+}

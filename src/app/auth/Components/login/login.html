@@ -1,0 +1,87 @@
+<div
+  class="relative flex items-center justify-end min-h-screen bg-cover"
+  style="background-image: url('assets/circuitguard.png');"
+>
+  <!-- Dark overlay to improve text readability -->
+  <div class="absolute inset-0 bg-opacity-50 z-0"></div>
+
+  <!-- Left Text Overlay -->
+  <div class="absolute left-16 text-white max-w-xl">
+    <div class="flex items-center space-x-6 text-lg" style="height: 90vh; display: flex; align-items: end;">
+      <div class="flex items-center space-x-2">
+        <mat-icon class="text-white">check_circle</mat-icon>
+        <span>Project Onboarding</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <mat-icon class="text-white">check_circle</mat-icon>
+        <span>Task Assignment & Monitoring</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Overlay Card -->
+  <div
+    class="relative z-10 bg-white p-10 rounded-2xl shadow-2xl w-full max-w-md mr-10 backdrop-blur-sm"
+  >
+    <div class="text-center mb-8">
+      <div class="flex justify-center mb-4">
+        <mat-icon>business</mat-icon>
+      </div>
+      <h2 class="text-2xl font-bold text-gray-800">CircuitGuard.ai</h2>
+      <p class="text-sm text-gray-500 mt-1">Welcome to CircuitGuard</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
+      <div>
+        <label class="block text-gray-700 text-sm font-semibold mb-1">Email</label>
+        <div class="relative">
+          <mat-icon class="absolute left-3 top-3 text-gray-400">person</mat-icon>
+          <input
+            type="email"
+            formControlName="username"
+            placeholder="Enter your email"
+            class="pl-10 w-full border border-gray-300 rounded-lg py-2.5 px-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-gray-700 text-sm font-semibold mb-1">Password</label>
+        <div class="relative">
+          <mat-icon class="absolute left-3 top-3 text-gray-400">lock</mat-icon>
+          <input
+            [type]="hidePassword ? 'password' : 'text'"
+            formControlName="password"
+            placeholder="Enter your password"
+            class="pl-10 w-full border border-gray-300 rounded-lg py-2.5 px-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+          />
+          <mat-icon
+            class="absolute right-3 top-3 text-gray-400 cursor-pointer"
+            (click)="hidePassword = !hidePassword"
+          >
+            {{ hidePassword ? 'visibility_off' : 'visibility' }}
+          </mat-icon>
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        [disabled]="isLoading || loginForm.invalid"
+        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg transition-all disabled:opacity-50"
+      >
+        {{ isLoading ? 'Logging in...' : 'Continue' }}
+      </button>
+
+      <div class="flex items-center justify-center text-gray-400 text-sm">
+        <span class="mx-2">or</span>
+      </div>
+
+      <button
+        type="button"
+        class="flex items-center justify-center w-full border border-gray-300 py-2.5 rounded-lg hover:bg-gray-100 transition-all"
+      >
+        Continue with Google
+      </button>
+    </form>
+  </div>
+</div>

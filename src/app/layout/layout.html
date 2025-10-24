@@ -1,0 +1,66 @@
+<div class="bg-gray-100 font-sans overflow-hidden">
+  <!-- Fixed Navbar -->
+  <nav
+    class="bg-white p-4 flex items-center justify-between z-50 fixed top-0 left-0 right-0 w-full"
+  >
+    <!-- Logo & Title -->
+    <div class="flex items-center space-x-6">
+      <div class="flex items-center space-x-2 ml-16">
+        <mat-icon class="text-blue-600">business</mat-icon>
+        <div class="flex flex-col">
+          <span class="text-xl font-semibold text-gray-800">Circuit Guard</span>
+          <span class="text-sm text-gray-500">Service Management Platform</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right-side Actions -->
+    <div class="flex items-center space-x-4 mr-8">
+      <!-- AI Input -->
+      <form class="max-w-lg mx-auto">
+        <div class="ask-ai-wrapper">
+          <div class="ai-input-container relative">
+            <span class="underline-effect"></span>
+            <span class="ripple-circle"></span>
+            <span class="bg-fade"></span>
+            <span class="floating-dots">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </span>
+            <input
+              placeholder="CircuitGuard.ai"
+              class="ai-input border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              type="text"
+            />
+            <span class="icon-container"></span>
+          </div>
+        </div>
+      </form>
+
+      <!-- Notifications -->
+      <div class="relative">
+        <button mat-icon-button>
+          <mat-icon>notifications</mat-icon>
+        </button>
+        <span
+          class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full"
+          >2</span
+        >
+      </div>
+
+      <!-- Profile Circle -->
+      <div
+        class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-bold cursor-pointer"
+      >
+        A
+      </div>
+    </div>
+  </nav>
+
+  <!-- Scrollable Content Area -->
+  <main class="pt-[80px] overflow-y-auto pb-6">
+  <router-outlet></router-outlet>
+  </main>
+</div>

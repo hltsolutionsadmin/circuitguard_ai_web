@@ -1,0 +1,182 @@
+<app-banner-card [config]="{
+    icon: 'edit',
+    title: project?.name || 'Loading...',
+    subtitle: project?.description || 'Loading description...',
+    meta: [
+      { icon: 'event', text: project?.endDate || 'N/A' }
+    ],
+    buttons: [
+      { text: 'Add Client', icon: 'play_arrow', style: 'primary' },
+      { text: 'Add Team Member', icon: 'add', style: 'primary' }
+    ],
+    bgGradient: 'from-blue-500 to-blue-700'
+  }"></app-banner-card>
+
+<div class="min-h-screen bg-gray-50" style="padding: 1.5rem 4rem;">
+  <!-- Top Stats -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center justify-between">
+      <div>
+        <p class="text-gray-500 text-sm font-medium mb-1">Project Progress</p>
+        <h2 class="text-2xl font-semibold text-gray-900">{{ project?.progressPercentage || 0 }}%</h2>
+        <p class="text-xs text-gray-500 mt-1">Tasks completed</p>
+      </div>
+      <mat-icon class="text-green-500 text-4xl">check_circle</mat-icon>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center justify-between">
+      <div>
+        <p class="text-gray-500 text-sm font-medium mb-1">Active Incidents</p>
+        <h2 class="text-2xl font-semibold text-gray-900">0</h2>
+        <p class="text-xs text-gray-500 mt-1">No active incidents</p>
+      </div>
+      <mat-icon class="text-red-500 text-4xl">warning</mat-icon>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center justify-between">
+      <div>
+        <p class="text-gray-500 text-sm font-medium mb-1">Team Members</p>
+        <h2 class="text-2xl font-semibold text-gray-900">{{ project?.projectMembers.length || 0 }}</h2>
+        <p class="text-xs text-gray-500 mt-1">Members assigned</p>
+      </div>
+      <mat-icon class="text-blue-500 text-4xl">groups</mat-icon>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center justify-between">
+      <div>
+        <p class="text-gray-500 text-sm font-medium mb-1">Days Remaining</p>
+        <h2 class="text-2xl font-semibold text-gray-900">{{ calculateDaysRemaining(project?.dueDate) }}</h2>
+        <p class="text-xs text-gray-500 mt-1">Workdays to deadline</p>
+      </div>
+      <mat-icon class="text-purple-500 text-4xl">calendar_today</mat-icon>
+    </div>
+  </div>
+
+  <!-- Project Leadership -->
+  <div class="mb-10">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-semibold text-gray-900">Project Leadership</h3>
+      <button class="flex items-center text-blue-600 text-sm hover:underline">
+        <mat-icon class="!text-base mr-1">settings</mat-icon> Manage Roles
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Card: Michael -->
+      <div class="bg-blue-50 border border-blue-100 rounded-xl p-5 shadow-sm">
+        <div class="flex items-center space-x-4 mb-4">
+          <img src="https://randomuser.me/api/portraits/men/10.jpg" class="w-12 h-12 rounded-full" alt="Michael" />
+          <div>
+            <h4 class="font-semibold text-gray-900">Michael Rodriguez</h4>
+            <p class="text-sm text-gray-500">Project Manager · Onsite</p>
+          </div>
+        </div>
+        <p class="text-sm text-gray-600 mb-2">michael@company.com</p>
+        <p class="text-sm text-gray-600 mb-2">+1 (234) 567-8901</p>
+        <p class="text-xs text-gray-400 mb-4">Joined since Jan 2024</p>
+
+        <div class="flex justify-between text-sm mb-3">
+          <span class="text-gray-600">Active Assignments</span>
+          <span class="font-semibold text-gray-800">92%</span>
+        </div>
+        <button class="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-lg py-2 text-sm font-medium flex items-center justify-center space-x-1">
+          <mat-icon class="!text-base">chat</mat-icon>
+          <span>Message</span>
+        </button>
+      </div>
+
+      <!-- Card: Sarah -->
+      <div class="bg-green-50 border border-green-100 rounded-xl p-5 shadow-sm">
+        <div class="flex items-center space-x-4 mb-4">
+          <img src="https://randomuser.me/api/portraits/women/11.jpg" class="w-12 h-12 rounded-full" alt="Sarah" />
+          <div>
+            <h4 class="font-semibold text-gray-900">Sarah Chen</h4>
+            <p class="text-sm text-gray-500">Technical Lead · Hybrid</p>
+          </div>
+        </div>
+        <p class="text-sm text-gray-600 mb-2">sarah@company.com</p>
+        <p class="text-sm text-gray-600 mb-2">+1 (987) 654-3210</p>
+        <p class="text-xs text-gray-400 mb-4">Joined since Mar 2022</p>
+
+        <div class="flex justify-between text-sm mb-3">
+          <span class="text-gray-600">Code Reviews</span>
+          <span class="font-semibold text-gray-800">228 this week</span>
+        </div>
+        <button class="w-full bg-green-500 hover:bg-green-600 text-white rounded-lg py-2 text-sm font-medium flex items-center justify-center space-x-1">
+          <mat-icon class="!text-base">chat</mat-icon>
+          <span>Message</span>
+        </button>
+      </div>
+
+      <!-- Card: Jennifer -->
+      <div class="bg-purple-50 border border-purple-100 rounded-xl p-5 shadow-sm">
+        <div class="flex items-center space-x-4 mb-4">
+          <img src="https://randomuser.me/api/portraits/women/12.jpg" class="w-12 h-12 rounded-full" alt="Jennifer" />
+          <div>
+            <h4 class="font-semibold text-gray-900">Jennifer Liu</h4>
+            <p class="text-sm text-gray-500">QA Lead · Away</p>
+          </div>
+        </div>
+        <p class="text-sm text-gray-600 mb-2">jennifer@company.com</p>
+        <p class="text-sm text-gray-600 mb-2">+1 (111) 222-3333</p>
+        <p class="text-xs text-gray-400 mb-4">ISTQB Certified</p>
+
+        <div class="flex justify-between text-sm mb-3">
+          <span class="text-gray-600">Tests Executed</span>
+          <span class="font-semibold text-gray-800">156 this week</span>
+        </div>
+        <button class="w-full bg-purple-500 hover:bg-purple-600 text-white rounded-lg py-2 text-sm font-medium flex items-center justify-center space-x-1">
+          <mat-icon class="!text-base">chat</mat-icon>
+          <span>Message</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Project Teams -->
+  <div>
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-semibold text-gray-900">Project Teams & Groups</h3>
+      <div class="flex items-center space-x-3">
+        <button class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center space-x-1">
+          <mat-icon class="!text-base">download</mat-icon>
+          <span>Export Teams</span>
+        </button>
+        <button class="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-3 py-1.5 text-sm font-medium flex items-center space-x-1">
+          <mat-icon class="!text-base">add</mat-icon>
+          <span>Add Team Member</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-1 gap-6">
+      <!-- Development Team -->
+      <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h4 class="font-semibold text-gray-900 flex items-center space-x-2">
+              <mat-icon class="text-blue-500 !text-base">developer_mode</mat-icon>
+              <span>Development Team</span>
+            </h4>
+            <p class="text-xs text-gray-500">Frontend & Backend Developers</p>
+          </div>
+          <span class="text-sm font-semibold text-gray-700">{{ project?.projectMembers.length || 0 }} Members</span>
+        </div>
+
+        <div class="space-y-3">
+          <div *ngFor="let member of project?.projectMembers" class="flex justify-between items-center border rounded-lg p-2">
+            <span class="text-sm text-gray-800 font-medium">{{ member.name || 'Unknown' }}</span>
+            <span class="text-green-600 text-xs font-semibold">Active</span>
+          </div>
+        </div>
+
+        <div class="flex justify-between items-center mt-4 text-sm text-gray-600">
+          <span>Team Performance</span>
+          <span class="font-semibold text-gray-900">94%</span>
+        </div>
+      </div>
+
+      <!-- QA Team -->
+    </div>
+  </div>
+</div>

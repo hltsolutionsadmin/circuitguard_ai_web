@@ -1,0 +1,154 @@
+<!-- @if(projectOnboardingWizard){
+  <app-banner-card [config]="{
+    icon: 'edit',
+    title: 'Project Onboarding Wizard',
+    subtitle: 'Set up your project and team in just a few steps',
+    meta: [
+      { icon: 'schedule', text: 'Estimated time: 15 minutes' },
+      { icon: 'list_alt', text: '5 simple steps' },
+      { icon: 'lock', text: 'Secure & guided' }
+    ],
+    buttons: [
+      { text: 'Start Onboarding', icon: 'play_arrow', style: 'primary' }
+    ],
+    bgGradient: 'from-blue-500 to-blue-700'
+  }"></app-banner-card>
+} @else {
+  <app-banner-card [config]="{
+    icon: 'edit',
+    title: 'Create Team',
+    subtitle: 'Set up your project and team in just a few steps',
+    meta: [
+      { icon: 'schedule', text: 'Estimated time: 15 minutes' },
+      { icon: 'list_alt', text: '5 simple steps' },
+      { icon: 'lock', text: 'Secure & guided' }
+    ],
+    buttons: [
+      { text: 'Start Onboarding', icon: 'play_arrow', style: 'primary' }
+    ],
+    bgGradient: 'from-blue-500 to-blue-700'
+  }"></app-banner-card>
+} -->
+
+<!-- project-onboarding.component.html -->
+<div class="min-h-screen bg-gray-50 flex justify-center items-start py-10 px-4">
+  <div class="w-full max-w-6xl bg-white rounded-2xl border border-gray-100 p-10" style="border: 1px solid #b5afaf;">
+
+    <!-- Header -->
+    <div class="flex items-center space-x-3 mb-6">
+      <div class="bg-blue-100 p-3 rounded-xl flex items-center justify-center text-blue-600">
+        <mat-icon class="!text-3xl">create_new_folder</mat-icon>
+      </div>
+      <div>
+        <h2 class="text-2xl font-bold text-gray-900">
+          Create Your <span class="text-blue-600">Project</span>
+        </h2>
+        <p class="text-gray-600 text-sm mt-1">
+          Let’s start with the basic information about your project
+        </p>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <form [formGroup]="projectDetailsForm" (ngSubmit)="onSubmit()" class="grid grid-cols-1 md:grid-cols-1 gap-x-10 gap-y-6">
+      <div class="flex flex-col gap-6">
+
+        <!-- Project Name -->
+        <div class="flex flex-col">
+          <label class="font-medium text-gray-800 mb-1">Project Name *</label>
+          <input
+            type="text"
+            formControlName="projectName"
+            placeholder="Enter your project name"
+            class="border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-gray-700"
+          />
+          <p class="text-xs text-gray-500 mt-1">
+            Choose a clear, descriptive name for your project
+          </p>
+          <p
+            *ngIf="projectDetailsForm.get('projectName')?.invalid && projectDetailsForm.get('projectName')?.touched"
+            class="text-xs text-red-600 mt-1"
+          >
+            Project Name is required
+          </p>
+        </div>
+
+        <!-- Project Description -->
+        <div class="flex flex-col md:col-span-2">
+          <label class="font-medium text-gray-800 mb-1">Project Description *</label>
+          <textarea
+            formControlName="projectDescription"
+            placeholder="Describe your project goals and scope..."
+            rows="3"
+            class="border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-gray-700"
+          ></textarea>
+          <p class="text-xs text-gray-500 mt-1">
+            Provide a brief overview of what this project aims to achieve
+          </p>
+          <p
+            *ngIf="projectDetailsForm.get('projectDescription')?.invalid && projectDetailsForm.get('projectDescription')?.touched"
+            class="text-xs text-red-600 mt-1"
+          >
+            Project Description is required
+          </p>
+        </div>
+
+        <!-- Project Category -->
+        <div class="flex flex-col">
+          <label class="font-medium text-gray-800 mb-1">Project Category *</label>
+          <select
+            formControlName="projectCategory"
+            class="border border-gray-300 rounded-lg px-4 py-2.5 text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+          >
+            <option value="">Select project category...</option>
+            <option value="development">Development</option>
+            <option value="marketing">Marketing</option>
+            <option value="design">Design</option>
+            <option value="operations">Operations</option>
+          </select>
+        </div>
+
+        <!-- Dates -->
+        <div class="flex w-full gap-4">
+          <div class="flex flex-col" style="width: 50%;">
+            <label class="font-medium text-gray-800 mb-1">Start Date *</label>
+            <input
+              type="date"
+              formControlName="startDate"
+              class="border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-gray-700"
+            />
+          </div>
+
+          <div class="flex flex-col" style="width: 50%;">
+            <label class="font-medium text-gray-800 mb-1">Target End Date *</label>
+            <input
+              type="date"
+              formControlName="targetEndDate"
+              class="border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-gray-700"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="md:col-span-2 flex justify-end pt-8 border-t border-gray-200 mt-8">
+        <!-- <button
+          type="button"
+          (click)="onBack()"
+          class="px-5 py-2.5 border border-gray-300 rounded-full text-gray-700 font-medium flex items-center space-x-2 hover:bg-gray-50 transition"
+        >
+          <mat-icon>arrow_back</mat-icon>
+          <span>Back</span>
+        </button> -->
+
+        <button
+          type="submit"
+          class="px-6 py-2.5 rounded-full text-white font-medium flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+        >
+          <span>Create</span>
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

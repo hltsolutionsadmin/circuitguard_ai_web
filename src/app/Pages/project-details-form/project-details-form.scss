@@ -1,0 +1,92 @@
+/* components/project-details-form/project-details-form.component.scss */
+
+mat-card {
+  border-radius: 0.5rem; /* rounded-lg */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+}
+
+/* General Material Form Field adjustments */
+mat-form-field {
+  .mat-form-field-wrapper {
+    padding-bottom: 0.5em; /* Reduce default padding below input */
+  }
+  .mat-form-field-infix {
+    padding: 0.8em 0; /* Adjust padding for better visual alignment */
+  }
+  .mat-form-field-label {
+    top: 1em; /* Adjust label position */
+  }
+  &.mat-form-field-appearance-outline {
+    .mat-form-field-flex {
+      padding: 0 1em 0 1em; /* Adjust horizontal padding for outline */
+    }
+  }
+}
+
+/* Custom styles for the mat-checkbox to mimic the image's "chip" style */
+::ng-deep .mat-checkbox-layout {
+  white-space: nowrap; // Prevent text from wrapping
+  .mat-checkbox-inner-container {
+    margin-right: 8px; // Space between checkbox and label
+    flex-shrink: 0; // Prevent checkbox from shrinking
+  }
+  .mat-checkbox-label {
+    padding-left: 0; // Remove default material label padding if any
+  }
+}
+
+/* Specific styling for the priority and team size buttons/chips */
+.grid > div.p-3 {
+  // Styles for priority selection
+  &.bg-green-100 { background-color: #D1FAE5; } // Tailwind green-100
+  &.text-green-700 { color: #047857; } // Tailwind green-700
+  &.border-green-300 { border-color: #6EE7B7; } // Tailwind green-300
+
+  &.bg-yellow-100 { background-color: #FEF3C7; } // Tailwind yellow-100
+  &.text-yellow-700 { color: #B45309; } // Tailwind yellow-700
+  &.border-yellow-300 { border-color: #FCD34D; } // Tailwind yellow-300
+
+  &.bg-red-100 { background-color: #FEE2E2; } // Tailwind red-100
+  &.text-red-700 { color: #B91C1C; } // Tailwind red-700
+  &.border-red-300 { border-color: #F87171; } // Tailwind red-300
+
+  mat-icon {
+    font-size: 20px;
+    height: 20px;
+    width: 20px;
+  }
+}
+
+.grid > div.p-2 {
+  // Styles for team size selection
+  &.border-blue-500 { border-color: #3B82F6; }
+  &.ring-blue-200 { box-shadow: 0 0 0 2px #BFDBFE; }
+  &.bg-blue-50 { background-color: #EFF6FF; }
+  &.hover\:bg-gray-50:hover { background-color: #F9FAFB; }
+  &.border-gray-300 { border-color: #D1D5DB; }
+  &.text-gray-700 { color: #374151; }
+}
+
+/* Angular Material overrides for checkbox */
+.mat-checkbox-layout {
+  .mat-checkbox-frame {
+    border-color: #D1D5DB; // gray-300
+  }
+  .mat-checkbox-checked .mat-checkbox-background {
+    background-color: #3B82F6; // blue-500
+  }
+  &.mat-checkbox-disabled .mat-checkbox-frame {
+    border-color: #E5E7EB; // gray-200
+  }
+}
+
+/* Ensure Material button icons are correctly spaced */
+button.mat-flat-button, button.mat-stroked-button {
+  .mat-icon {
+    margin-right: 8px;
+    margin-left: -4px;
+    font-size: 20px; // Standard icon size
+    height: 20px;
+    width: 20px;
+  }
+}
