@@ -7,17 +7,20 @@ import { MaterialModule } from './Common/material.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Layout } from './layout/layout';
 import { BannerCard } from './Common/sharedComponents/banner-card/banner-card';
-import { ProjectDetailsForm } from './Pages/project-details-form/project-details-form';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { TeamSetup } from './Pages/team-setup/team-setup';
 import { MatNavList } from '@angular/material/list';
 import { Projects } from './Pages/projects/projects';
-import { ProjectTicket } from './Pages/project-ticket/project-ticket';
+import { ProjectTicket } from './Pages/incidents-dashboard/incident-form/project-ticket';
 import { HTTP_INTERCEPTORS, provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
-import { ProjectById } from './Pages/project-by-id/project-by-id';
+import { ProjectById } from './Pages/projects/project-by-id/project-by-id';
 import { AddTeamMember } from './Pages/team-setup/add-team-member/add-team-member';
 import { CommonService } from './Common/services/common-service';
 import { TokenInterceptor } from './Common/interceptor/token-interceptor';
+import { RouterOutlet } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { IncidentsDashboard } from './Pages/incidents-dashboard/incidents-dashboard';
+import { ProjectDetailsForm } from './Pages/projects/project-details-form/project-details-form';
 
 export function initializeApiConfig(apiConfigService: CommonService) {
   return () => apiConfigService.loadConfig();
@@ -34,7 +37,8 @@ export function initializeApiConfig(apiConfigService: CommonService) {
     Projects,
     ProjectTicket,
     ProjectById,
-    AddTeamMember
+    AddTeamMember,
+    IncidentsDashboard
   ],
   imports: [
     BrowserModule,
@@ -42,6 +46,8 @@ export function initializeApiConfig(apiConfigService: CommonService) {
     MaterialModule,
     ReactiveFormsModule,
     MatNavList,
+    RouterOutlet,
+    CommonModule
 ],
   providers: [
     provideBrowserGlobalErrorListeners(),

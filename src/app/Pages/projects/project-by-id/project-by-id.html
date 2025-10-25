@@ -6,8 +6,8 @@
       { icon: 'event', text: project?.endDate || 'N/A' }
     ],
     buttons: [
-      { text: 'Add Client', icon: 'play_arrow', style: 'primary' },
-      { text: 'Add Team Member', icon: 'add', style: 'primary' }
+      { text: 'Add Client', icon: 'play_arrow', style: 'primary', action: openAddClientDialog.bind(this) },
+      { text: 'Incident', icon: 'add', style: 'primary', action: openAddTeamMemberDialog.bind(this) }
     ],
     bgGradient: 'from-blue-500 to-blue-700'
   }"></app-banner-card>
@@ -142,7 +142,7 @@
           <mat-icon class="!text-base">download</mat-icon>
           <span>Export Teams</span>
         </button>
-        <button class="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-3 py-1.5 text-sm font-medium flex items-center space-x-1">
+        <button class="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-3 py-1.5 text-sm font-medium flex items-center space-x-1" (click)="openAddTeamMemberDialog()">
           <mat-icon class="!text-base">add</mat-icon>
           <span>Add Team Member</span>
         </button>

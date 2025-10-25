@@ -1,7 +1,6 @@
 import { HttpClient, HttpHeaders, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
-import { Auth } from '../../auth/Services/auth';
 import { ProjectResponse } from '../projects/project-model';
 
 export interface ProjectModel {
@@ -10,17 +9,10 @@ export interface ProjectModel {
   description: string;
   startDate: string;
   endDate: string;
-  targetEndDate: string;
-  dueDate: string;
   status: string;
   type: string;
-  ownerOrganizationId: number;
-  clientOrganizationId: number;
-  progressPercentage: number;
-  expectedTeamSize: string;
+  ownerOrganizationId: number | undefined;
   archived: boolean;
-  clientId: number;
-  projectManagerId: number;
 }
 
 @Injectable({
@@ -40,15 +32,12 @@ export class Project {
     );
   }
 
-   getProjects(page: number, size: number, clientId: number, managerId: number, status: string): Observable<ProjectResponse> {
+   getProjects(page: number, size: number, organizationId: any): Observable<ProjectResponse> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString())
-      .set('clientId', clientId.toString())
-      .set('managerId', managerId.toString())
-      .set('status', status);
 
-    return this.http.get<ProjectResponse>(this.apiUrl, { params }).pipe(
+    return this.http.get<ProjectResponse>(`${this.apiUrl}/1`, { params }).pipe(
       catchError(this.handleError)
     );
   }

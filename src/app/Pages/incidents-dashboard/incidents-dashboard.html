@@ -1,0 +1,135 @@
+<div
+  class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-7 text-white shadow-md bg-gradient-to-r from-red-500 to-red-700"
+  style="padding: 2rem 5rem;">
+  <!-- Left Section -->
+  <div class="space-x-4 sm:mb-0">
+    <p class="text-2xl font-bold leading-tight">{{ projectDesc }}</p>
+    <h1 class="text-white/90 text-sm mt-1">{{ projectNam }}</h1>
+  </div>
+
+  <div class="flex gap-4">
+    <button routerLink="/layout/incidents-Form" class="button-name" role="button"><mat-icon>add</mat-icon>Create
+      Incident</button>
+  </div>
+</div>
+<div class="space-y-6 bg-gray-50 min-h-screen" style="padding: 2em 5em;">
+  <!-- Top Stat Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <!-- Incidents -->
+    <div class="flex items-center justify-between bg-white rounded-2xl shadow p-4">
+      <div class="flex items-center space-x-3">
+        <mat-icon class="text-red-500">report_problem</mat-icon>
+        <div>
+          <p class="text-sm text-gray-500">Incidents</p>
+          <p class="text-lg font-semibold">8</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Teams -->
+    <div class="flex items-center justify-between bg-white rounded-2xl shadow p-4">
+      <div class="flex items-center space-x-3">
+        <mat-icon class="text-orange-500">groups</mat-icon>
+        <div>
+          <p class="text-sm text-gray-500">Teams</p>
+          <p class="text-lg font-semibold">4</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contract -->
+    <div class="flex items-center justify-between bg-white rounded-2xl shadow p-4">
+      <div class="flex items-center space-x-3">
+        <mat-icon class="text-yellow-500">assignment</mat-icon>
+        <div>
+          <p class="text-sm text-gray-500">Contract</p>
+          <p class="text-lg font-semibold">1</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analytics -->
+    <div class="flex items-center justify-between bg-white rounded-2xl shadow p-4 opacity-50">
+      <div class="flex items-center space-x-3">
+        <mat-icon class="text-gray-400">analytics</mat-icon>
+        <div>
+          <p class="text-sm text-gray-500">Analytics</p>
+          <p class="text-lg font-semibold">–</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section Title -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between">
+    <div>
+      <h2 class="text-xl font-semibold text-gray-800">Incidents</h2>
+      <p class="text-sm text-gray-500">Critical and high priority incidents requiring immediate attention</p>
+    </div>
+
+    <!-- Filters -->
+    <div class="flex items-center space-x-3 mt-3 sm:mt-0">
+      <span class="text-sm text-gray-500 font-medium">View:</span>
+      <button class="px-3 py-1 text-sm font-medium rounded-full bg-blue-100 text-blue-600">All</button>
+      <button class="px-3 py-1 text-sm font-medium rounded-full text-gray-600 hover:bg-gray-100">Critical</button>
+      <button class="px-3 py-1 text-sm font-medium rounded-full text-gray-600 hover:bg-gray-100">High</button>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="bg-white shadow rounded-2xl overflow-hidden">
+    <table class="w-full text-left border-collapse">
+      <thead class="bg-gray-100 text-sm text-gray-600">
+        <tr>
+          <th class="px-4 py-3"><input type="checkbox" /></th>
+          <th class="px-4 py-3">Incident ID</th>
+          <th class="px-4 py-3">Title</th>
+          <th class="px-4 py-3">Priority</th>
+          <th class="px-4 py-3">Status</th>
+          <th class="px-4 py-3">Assigned To</th>
+          <th class="px-4 py-3">Created</th>
+          <th class="px-4 py-3">Due Date</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y text-sm">
+        <tr *ngFor="let incident of incidents" class="hover:bg-gray-50">
+          <td class="px-4 py-3"><input type="checkbox" /></td>
+          <td class="px-4 py-3 font-mono text-gray-700">{{ incident.id }}</td>
+          <td class="px-4 py-3 font-medium text-gray-800">{{ incident.title }}</td>
+          <td class="px-4 py-3">
+            <span [ngClass]="priorityClass(incident.priority)" class="px-2 py-1 text-xs font-medium rounded-full">
+              {{ incident.priority }}
+            </span>
+          </td>
+          <td class="px-4 py-3">
+            <span [ngClass]="statusClass(incident.status)" class="px-2 py-1 text-xs font-medium rounded-full">
+              {{ incident.status }}
+            </span>
+          </td>
+          <td class="px-4 py-3 flex items-center space-x-2">
+            <img [src]="incident.assignedTo.avatar" class="w-6 h-6 rounded-full" alt="avatar" />
+            <span>{{ incident.assignedTo.name }}</span>
+          </td>
+          <td class="px-4 py-3 text-gray-600">{{ incident.created }}</td>
+          <td class="px-4 py-3 font-medium" [ngClass]="incident.dueOverdue ? 'text-red-500' : 'text-green-500'">
+            {{ incident.dueDate }}
+            <span *ngIf="incident.dueOverdue" class="text-xs">(Overdue)</span>
+            <span *ngIf="!incident.dueOverdue && incident.completed" class="text-xs">(Completed)</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="flex items-center justify-between p-4 border-t text-sm text-gray-600">
+      <p>Showing 1 to 5 of 19 high priority incidents</p>
+      <div class="flex items-center space-x-2">
+        <button class="px-3 py-1 border rounded hover:bg-gray-100">Previous</button>
+        <button class="px-3 py-1 border rounded bg-blue-100 text-blue-600">1</button>
+        <button class="px-3 py-1 border rounded hover:bg-gray-100">2</button>
+        <button class="px-3 py-1 border rounded hover:bg-gray-100">3</button>
+        <button class="px-3 py-1 border rounded hover:bg-gray-100">Next</button>
+      </div>
+    </div>
+  </div>
+</div>

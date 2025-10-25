@@ -18,9 +18,7 @@ export interface UserDetails {
   media: any[];
   password: string;
   registered: boolean;
-  organization: {
-       
-  }
+  organization: any;
 }
 
 @Injectable({

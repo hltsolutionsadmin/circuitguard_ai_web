@@ -8,9 +8,9 @@ import { MatSidenav } from '@angular/material/sidenav';
   styleUrl: './layout.scss'
 })
 export class Layout {
-   isSidenavOpen = true;
+  sidebarOpen = true;
 
-  toggleSidenav(): void {
-    this.isSidenavOpen = !this.isSidenavOpen;
+  toggleSidebar() {
+    this.sidebarOpen = !this.sidebarOpen;
   }
 }

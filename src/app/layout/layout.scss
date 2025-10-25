@@ -208,67 +208,49 @@
   --y: 15px;
   animation-delay: 0.6s;
 }
-// Sidenav specific styles
-.nav-drawer {
-  .nav-header {
-    height: 64px;
-  }
 
-  .nav-content {
-    padding-top: 8px;
-  }
+/* Hide scrollbar for WebKit browsers */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
 
-  .mat-list-item {
-    height: 40px;
-    border-radius: 6px;
-    margin: 2px 0;
-    transition: all 0.3s ease;
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.5);
+  border-radius: 4px;
+}
 
-    &.active-link,
-    &:hover {
-      background-color: #3b82f6; // Blue background from the image
-      .mat-list-item-content {
-        color: #ffffff; // White text
-        .mat-icon {
-          color: #ffffff;
-        }
-      }
-    }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(107, 114, 128, 0.7);
+}
 
-    &:not(.active-link):hover {
-      background-color: #eff6ff; // Light blue hover for non-active
-      .mat-list-item-content {
-        color: #1e40af; // Dark blue text on hover
-        .mat-icon {
-          color: #1e40af;
-        }
-      }
-    }
+/* Smooth transition for sidebar width */
+:host {
+  display: block;
+  height: 100vh;
+  overflow: hidden;
+}
 
-    .mat-list-item-content {
-      padding: 0 12px;
-      border-radius: 6px;
-
-      .mat-icon {
-        font-size: 20px;
-        color: inherit;
-      }
-
-      span {
-        font-size: 14px;
-        font-weight: 500;
-        color: inherit;
-      }
-    }
+button {
+  width: 120px;
+  height: 40px;
+  border: 1px solid #d1d5db;
+  border-radius: 15px;
+  transition: all 0.3s;
+  cursor: pointer;
+  background: white;
+  font-size: 1em;
+  font-weight: 550;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: .3em;
+  mat-icon {
+    font-size: 20px;
   }
 }
 
-// Ensure no interference with top nav or content
-mat-sidenav-content {
-  nav {
-    z-index: 10;
-  }
-  main {
-    padding: 20px;
-  }
+button:hover {
+  background: #315cfd;
+  color: white;
+  font-size: 1.1em;
 }

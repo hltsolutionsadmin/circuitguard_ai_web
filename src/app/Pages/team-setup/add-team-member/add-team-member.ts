@@ -2,7 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TeamService } from '../../services/team-service';
-import { CommonService, UserDetails } from '../../../Common/services/common-service';
+import { CommonService } from '../../../Common/services/common-service';
 
 @Component({
   selector: 'app-add-team-member',
@@ -12,29 +12,35 @@ import { CommonService, UserDetails } from '../../../Common/services/common-serv
 })
 export class AddTeamMember {
   addUserForm: FormGroup;
-   user: any;
-   isEdit: boolean = false;
+  user: any;
+  isEdit: boolean = false;
+  isClient: boolean = false;
 
   constructor(
     public dialogRef: MatDialogRef<AddTeamMember>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private fb: FormBuilder,
     private userManagementService: TeamService,
-    private CommonService : CommonService
+    private CommonService: CommonService
   ) {
     this.CommonService.user$.subscribe((data) => {
-      this.user = data?.organization
-    })
+      this.user = data?.organization;
+    });
+
+    // Determine if this is for a client or team member
+    this.isClient = data?.isClient || false;
+    this.isEdit = !!data?.userId;
+
+    // Initialize form, conditionally applying validators
     this.addUserForm = this.fb.group({
       employeeName: ['', [Validators.required]],
       employeeEmail: ['', [Validators.required, Validators.email]],
-      role: ['', [Validators.required]],
+      role: [this.isClient ? 'CLIENT_REPRESENTATIVE' : '', this.isClient ? [] : [Validators.required]],
       employeeContact: ['', [Validators.required, Validators.pattern('^\\+?[0-9]{10,15}$')]],
-      password: ['', [Validators.required, Validators.minLength(8)]]
+      password: ['', this.isEdit ? [] : [Validators.required, Validators.minLength(8)]]
     });
-     this.isEdit = !!data;
+
     if (this.isEdit && this.data) {
-      console.log(data)
       this.addUserForm.patchValue({
         employeeName: this.data.fullName,
         employeeEmail: this.data.username,
@@ -45,13 +51,13 @@ export class AddTeamMember {
     }
   }
 
- onSubmit(): void {
+  onSubmit(): void {
     if (this.addUserForm.valid) {
       let payload: any = {
         userId: this.isEdit ? this.data?.userId : null,
         targetType: 'ORGANIZATION',
-        targetId: 4,
-        role: this.addUserForm.value.role,
+        targetId: this.user.id,
+        role: this.isClient ? 'CLIENT_REPRESENTATIVE' : this.addUserForm.value.role,
         active: this.isEdit ? this.data?.active : true,
         username: this.addUserForm.value.employeeEmail,
         fullName: this.addUserForm.value.employeeName,

@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Project, ProjectModel } from '../services/project';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Project, ProjectModel } from '../../services/project';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { AddTeamMember } from '../../team-setup/add-team-member/add-team-member';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-project-by-id',
@@ -10,13 +12,15 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrl: './project-by-id.scss'
 })
 export class ProjectById {
- project: any | null = null;
+   project: any | null = null;
   isLoading = false;
 
   constructor(
     private route: ActivatedRoute,
     private projectService: Project,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -31,6 +35,7 @@ export class ProjectById {
         next: (response) => {
           this.project = response.data;
           this.isLoading = false;
+          console.log(this.project)
         },
         error: (error) => {
           this.isLoading = false;
@@ -52,5 +57,27 @@ export class ProjectById {
     const diffTime = due.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays > 0 ? diffDays : 0;
+  }
+
+  openAddClientDialog(): void {
+    const dialogRef = this.dialog.open(AddTeamMember, {
+      width: '600px',
+      data: { isClient: true }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadProject(); // Refresh project data after adding client
+        this.snackBar.open('Client added successfully', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top'
+        });
+      }
+    });
+  }
+
+  openAddTeamMemberDialog(): void {
+   this.router.navigate(['layout/incidents-dashboard', this.project.description, this.project.name])
   }
 }

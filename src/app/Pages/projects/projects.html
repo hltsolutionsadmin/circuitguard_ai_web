@@ -1,5 +1,6 @@
 <div
-  class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-7 text-white shadow-md bg-gradient-to-r from-blue-500 to-blue-700" style="padding: 2rem 4rem;">
+  class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-7 text-white shadow-md bg-gradient-to-r from-blue-500 to-blue-700"
+  style="padding: 2rem 4rem;">
   <!-- Left Section -->
   <div class="flex items-start space-x-4 sm:mb-0">
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -39,8 +40,8 @@
   </div>
 
   <div class="flex gap-4">
-   <button routerLink="/layout/project-details" class="button-name" role="button"><mat-icon>add</mat-icon>Create Project</button>
-   <button routerLink="/layout/team-setUp" class="button-name" role="button"><mat-icon>add</mat-icon>Team Members</button>
+    <button routerLink="/layout/project-details" class="button-name" role="button"><mat-icon>add</mat-icon>Create
+      Project</button>
   </div>
 </div>
 
@@ -83,14 +84,15 @@
       <div class="flex items-center mb-2">
         <mat-icon class="text-blue-500 mr-2">language</mat-icon>
         <h3 class="text-lg font-semibold text-gray-900">{{ project.name }}</h3>
-        <span class="ml-auto px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">{{ project.status }}</span>
+        <span class="ml-auto px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">{{ project.status
+          }}</span>
       </div>
       <p class="text-gray-600 text-sm mb-4">Web Application</p>
       <p class="text-gray-600 text-sm">{{ project.description }}</p>
       <div class="flex justify-between items-center mt-4">
         <div>
           <p class="text-gray-600 text-xs">Due Date</p>
-          <p class="text-gray-900 text-sm">{{ project.dueDate }}</p>
+          <p class="text-gray-900 text-sm">{{ project.endDate }}</p>
         </div>
       </div>
       <div class="flex items-center mt-4">
