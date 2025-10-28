@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Project, ProjectModel } from '../services/project';
 import { ProjectResponse } from './project-model';
 import { filter, take } from 'rxjs';
@@ -12,7 +12,7 @@ import { CommonService } from '../../Common/services/common-service';
   templateUrl: './projects.html',
   styleUrl: './projects.scss'
 })
-export class Projects {
+export class Projects implements OnInit {
   projects: ProjectModel[] = [];
   currentPage = 0;
   pageSize = 10;
@@ -28,8 +28,8 @@ export class Projects {
     private commonService: CommonService
   ) {}
 
+
   ngOnInit(): void {
-    // Wait until user info is available, then load projects
     this.commonService.user$
       .pipe(
         filter(user => !!user?.organization.id),
@@ -89,6 +89,6 @@ export class Projects {
   }
 
   onProjectClick(id: number): void {
-    this.router.navigate([`/layout/project-details/${id}`]);
+    this.router.navigate([`layout/incidents-dashboard/${id}`]);
   }
 }

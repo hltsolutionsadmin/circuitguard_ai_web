@@ -3,13 +3,15 @@
   style="padding: 2rem 5rem;">
   <!-- Left Section -->
   <div class="space-x-4 sm:mb-0">
-    <p class="text-2xl font-bold leading-tight">{{ projectDesc }}</p>
-    <h1 class="text-white/90 text-sm mt-1">{{ projectNam }}</h1>
+    <p class="text-2xl font-bold leading-tight">{{  project?.name }}</p>
+    <h1 class="text-white/90 text-sm mt-1">{{ project?.description }}</h1>
   </div>
 
   <div class="flex gap-4">
     <button routerLink="/layout/incidents-Form" class="button-name" role="button"><mat-icon>add</mat-icon>Create
       Incident</button>
+      <button class="button-name" role="button" (click)="openAddClientDialog()"><mat-icon>add</mat-icon>Add Client
+      </button>
   </div>
 </div>
 <div class="space-y-6 bg-gray-50 min-h-screen" style="padding: 2em 5em;">
@@ -132,4 +134,86 @@
       </div>
     </div>
   </div>
+
+  <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h4 class="font-semibold text-gray-900 flex items-center space-x-2">
+              <mat-icon class="text-blue-500 !text-base">developer_mode</mat-icon>
+              <span>Development Groups</span>
+            </h4>
+            <p class="text-xs text-gray-500">Frontend & Backend Developers</p>
+          </div>
+          <div class="">
+             <button
+                    class="bg-blue-600 hover:bg-blue-700 cursor-pointer text-white rounded-lg px-3 py-1.5 text-sm font-medium flex items-center space-x-1" (click)="openCreateGroupDialog()">
+                    <mat-icon class="!text-base">group</mat-icon>
+                    <span>Create Group</span>
+                  </button>
+          </div>
+          <!-- <span class="text-sm font-semibold text-gray-700">{{ project?.projectMembers.length || 0 }} Members</span> -->
+        </div>
+
+        <!-- <div class="space-y-3">
+          <div *ngFor="let member of project?.projectMembers" class="flex justify-between items-center border rounded-lg p-2">
+            <span class="text-sm text-gray-800 font-medium">{{ member.name || 'Unknown' }}</span>
+            <span class="text-green-600 text-xs font-semibold">Active</span>
+          </div>
+        </div> -->
+
+        <div class="bg-white shadow rounded-2xl overflow-hidden">
+          <table class="w-full border-collapse text-sm text-gray-800">
+            <thead class="bg-gray-100 text-gray-600 font-medium">
+              <tr>
+                <th class="px-4 py-3 w-16 text-left">S.No</th>
+                <th class="px-4 py-3 text-left w-1/3">Group Name</th>
+                <th class="px-4 py-3 text-left w-1/2">Description</th>
+                <th class="px-4 py-3 text-left w-1/4">Actions</th>
+              </tr>
+            </thead>
+            <tbody *ngIf="groups.length > 0; else noGroups" class="divide-y">
+              <tr *ngFor="let group of groups; let i = index" class="hover:bg-gray-50 transition">
+                <td class="px-4 py-3 font-mono text-gray-700">{{ i + 1 }}</td>
+                <td class="px-4 py-3 font-medium">{{ group.groupName }}</td>
+                <td class="px-4 py-3 text-gray-700">{{ group.description }}</td>
+                <td class="px-4 py-3">
+                  <button
+                  (click)="showMembers(group)"
+                    class="bg-blue-600 hover:bg-blue-700 cursor-pointer text-white rounded-lg px-3 py-1.5 text-sm font-medium flex items-center space-x-1">
+                    <mat-icon class="!text-base">group</mat-icon>
+                    <span>Members List</span>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+
+            <ng-template #noGroups>
+              <tbody>
+                <tr>
+                  <td colspan="4" class="text-center py-6 text-gray-500">No user groups found.</td>
+                </tr>
+              </tbody>
+            </ng-template>
+          </table>
+
+          <!-- Pagination -->
+          <div class="flex items-center justify-between p-4 border-t text-sm text-gray-600">
+            <p>Showing {{ groups.length }} of {{ totalElements }} groups</p>
+            <div class="flex items-center space-x-2">
+              <button class="px-3 py-1 border rounded hover:bg-gray-100" [disabled]="pageNumber === 0">
+                Previous
+              </button>
+              <span class="px-3 py-1 border rounded bg-blue-100 text-blue-600">
+                {{ pageNumber + 1 }}
+              </span>
+              <button class="px-3 py-1 border rounded hover:bg-gray-100"
+                [disabled]="(pageNumber + 1) * pageSize >= totalElements">
+                Next
+              </button>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
 </div>

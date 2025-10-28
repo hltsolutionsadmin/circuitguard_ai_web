@@ -1,3 +1,28 @@
+.removeButton {
+  width: 120px;
+  height: 40px;
+  border: 1px solid #d1d5db;
+  border-radius: 15px;
+  transition: all 0.3s;
+  cursor: pointer;
+  background: white;
+  font-size: 1em;
+  font-weight: 550;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: .3em;
+  mat-icon {
+    font-size: 20px;
+  }
+}
+
+.removeButton:hover {
+  background: #315cfd;
+  color: white;
+  font-size: 1.1em;
+}
+
 .button-name {
   align-items: center;
   appearance: none;

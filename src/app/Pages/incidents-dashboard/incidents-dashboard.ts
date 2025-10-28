@@ -1,5 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Project } from '../services/project';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Content } from '../projects/project-model';
+import { MatDialog } from '@angular/material/dialog';
+import { AddTeamMember } from '../team-setup/add-team-member/add-team-member';
+import { GroupFormComponent } from '../group-members-component/group-form-component/group-form-component';
 
 @Component({
   selector: 'app-incidents-dashboard',
@@ -9,8 +15,14 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class IncidentsDashboard implements OnInit{
 
+  project: any | null = null;
+  isLoading = false;
   projectNam: string = '';
   projectDesc: string = '';
+   groups: Content[] = [];
+    pageNumber = 0;
+    pageSize = 10;
+    totalElements = 0;
 
  incidents = [
     {
@@ -70,22 +82,63 @@ export class IncidentsDashboard implements OnInit{
     }
   ];
 
-  constructor() {}
+  constructor(
+    private projectService: Project,
+    private snackBar: MatSnackBar,
+    private router: Router,
+    private dialog: MatDialog,
+  ) {}
 
   ngOnInit(): void {
-   const projectName = this.route.snapshot.paramMap.get('name');
-   const projectDescription = this.route.snapshot.paramMap.get('description');
-   if (projectName && projectDescription) {
-     this.projectNam = projectName;
-     this.projectDesc = projectDescription;
-   }
+    this.loadGroups();
+    this.loadProject();
   }
 
   route = inject(ActivatedRoute)
 
-  getProjectDetails() {
-    
+  loadProject(): void {
+    this.isLoading = true;
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.projectService.getProjectById(+id).subscribe({
+        next: (response) => {
+          this.project = response.data;
+          this.isLoading = false;
+        },
+        error: (error) => {
+          this.isLoading = false;
+          this.showSnack(error.message || 'Error loading project details.');
+        }
+      });
+    }
   }
+
+  openAddClientDialog(): void {
+      const dialogRef = this.dialog.open(AddTeamMember, {
+        width: '600px',
+        data: { isClient: true }
+      });
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result) {
+          this.loadProject();
+          this.showSnack('Client added successfully');
+        }
+      });
+    }
+
+      openCreateGroupDialog(): void {
+      const dialogRef = this.dialog.open(GroupFormComponent, {
+        width: '600px',
+        data: this.project.id
+      });
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result) {
+          this.loadGroups();
+          this.showSnack('Group created successfully');
+        }
+      });
+    }
+
   priorityClass(priority: string) {
     switch (priority) {
       case 'Critical':
@@ -105,5 +158,29 @@ export class IncidentsDashboard implements OnInit{
       'Resolved': 'bg-green-100 text-green-600'
     };
     return map[status] || 'bg-gray-100 text-gray-600';
+  }
+
+   loadGroups(): void {
+    this.projectService.getUserGroups(this.pageNumber, this.pageSize).subscribe({
+      next: (res) => {
+        this.groups = res.data.content;
+        this.totalElements = res.data.totalElements;
+      },
+      error: () => {
+        this.showSnack('Error fetching user groups.');
+      }
+    });
+  }
+
+  showSnack(message: string): void {
+    this.snackBar.open(message, 'Close', {
+      duration: 4000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top'
+    });
+  }
+
+   showMembers(group: Content): void {
+    this.router.navigate(['/layout/members-list', group.id,group.groupName,group.description,this.project.id]);
   }
 }

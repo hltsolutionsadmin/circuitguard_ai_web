@@ -35,7 +35,7 @@ export class AddTeamMember {
     this.addUserForm = this.fb.group({
       employeeName: ['', [Validators.required]],
       employeeEmail: ['', [Validators.required, Validators.email]],
-      role: [this.isClient ? 'CLIENT_REPRESENTATIVE' : '', this.isClient ? [] : [Validators.required]],
+      role: [this.isClient ? 'CLIENT_ADMIN' : '', this.isClient ? [] : [Validators.required]],
       employeeContact: ['', [Validators.required, Validators.pattern('^\\+?[0-9]{10,15}$')]],
       password: ['', this.isEdit ? [] : [Validators.required, Validators.minLength(8)]]
     });
@@ -57,7 +57,7 @@ export class AddTeamMember {
         userId: this.isEdit ? this.data?.userId : null,
         targetType: 'ORGANIZATION',
         targetId: this.user.id,
-        role: this.isClient ? 'CLIENT_REPRESENTATIVE' : this.addUserForm.value.role,
+        role: this.isClient ? 'CLIENT_ADMIN' : this.addUserForm.value.role,
         active: this.isEdit ? this.data?.active : true,
         username: this.addUserForm.value.employeeEmail,
         fullName: this.addUserForm.value.employeeName,
