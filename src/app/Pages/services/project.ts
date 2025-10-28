@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
-import { ProjectResponse } from '../projects/project-model';
+import { projectGroupResponse, ProjectResponse } from '../projects/project-model';
 
 export interface ProjectModel {
   id?: any,
@@ -20,6 +20,7 @@ export interface ProjectModel {
 })
 export class Project {
   private apiUrl = '/api/usermanagement/projects';
+  private baseUrl = '/api/usermanagement/api/usergroups'
 
   constructor(
     private http: HttpClient,
@@ -37,7 +38,7 @@ export class Project {
       .set('page', page.toString())
       .set('size', size.toString())
 
-    return this.http.get<ProjectResponse>(`${this.apiUrl}/1`, { params }).pipe(
+    return this.http.get<ProjectResponse>(`${this.apiUrl}/${organizationId}`, { params }).pipe(
       catchError(this.handleError)
     );
   }
@@ -47,6 +48,11 @@ export class Project {
       catchError(this.handleError)
     );
   }
+
+    getUserGroups(page: number = 0, size: number = 10): Observable<projectGroupResponse> {
+    const url = `${this.baseUrl}?page=${page}&size=${size}`;
+    return this.http.get<projectGroupResponse>(url);
+  } 
 
   private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'An error occurred. Please try again later.';

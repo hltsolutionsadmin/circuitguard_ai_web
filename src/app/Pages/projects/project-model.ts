@@ -1,25 +1,3 @@
-// export interface Project {
-//   id: number;
-//   name: string;
-//   description: string;
-//   clientId: number;
-//   projectManagerId: number;
-//   startDate: string;
-//   endDate: string;
-//   targetEndDate: string;
-//   dueDate: string;
-//   status: string;
-//   type: string;
-//   ownerOrganizationId: number;
-//   clientOrganizationId: number;
-//   progressPercentage: number;
-//   budgetRange: string | null;
-//   expectedTeamSize: string;
-//   archived: boolean;
-//   projectMembers: any[];
-//   technologyStack: any[];
-// }
-
 export interface Pageable {
   pageNumber: number;
   pageSize: number;
@@ -72,3 +50,39 @@ export interface ProjectMember {
   email: string | null;
 }
 
+// project group 
+
+export interface projectGroupResponse {
+  message: string
+  status: string
+  data: Data
+}
+
+export interface Data {
+  content: Content[]
+  pageable: Pageable
+  last: boolean
+  totalElements: number
+  totalPages: number
+  size: number
+  number: number
+  sort: any[]
+  first: boolean
+  numberOfElements: number
+  empty: boolean
+}
+
+export interface Content {
+  id: number
+  groupName: string
+  description: string
+}
+
+export interface Pageable {
+  pageNumber: number
+  pageSize: number
+  sort: any[]
+  offset: number
+  paged: boolean
+  unpaged: boolean
+}

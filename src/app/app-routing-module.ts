@@ -10,6 +10,7 @@ import { loginGuard } from './Common/guards/login-guard';
 import { IncidentsDashboard } from './Pages/incidents-dashboard/incidents-dashboard';
 import { ProjectDetailsForm } from './Pages/projects/project-details-form/project-details-form';
 import { ProjectTicket } from './Pages/incidents-dashboard/incident-form/project-ticket';
+import { GroupMembersComponent } from './Pages/group-members-component/group-members-component';
 
 const routes: Routes = [
    { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -19,10 +20,12 @@ const routes: Routes = [
       { path: '', redirectTo: '/layout/project', pathMatch: 'full' },
       { path: 'project-details', component: ProjectDetailsForm },
       { path: 'project', component: Projects },
-      { path: 'incidents-dashboard/:name/:description', component: IncidentsDashboard },
+      { path: 'incidents-dashboard/:id', component: IncidentsDashboard },
       { path: 'incidents-Form', component: ProjectTicket },
       { path: 'team-setUp', component: TeamSetup },
-      { path: 'project-details/:id', component: ProjectById}
+      { path: 'project-details/:id', component: ProjectById},
+      { path: 'members-list/:groupId/:groupName/:description/:projectId',
+         component: GroupMembersComponent }
     ],
     canActivate: [authGuard]
     },

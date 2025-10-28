@@ -4,6 +4,7 @@ import { Project, ProjectModel } from '../../services/project';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AddTeamMember } from '../../team-setup/add-team-member/add-team-member';
 import { MatDialog } from '@angular/material/dialog';
+import { Content } from '../project-model';
 
 @Component({
   selector: 'app-project-by-id',
@@ -15,16 +16,23 @@ export class ProjectById {
    project: any | null = null;
   isLoading = false;
 
+  // new
+  groups: Content[] = [];
+  pageNumber = 0;
+  pageSize = 10;
+  totalElements = 0;
+
   constructor(
     private route: ActivatedRoute,
     private projectService: Project,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
     this.loadProject();
+    this.loadGroups();
   }
 
   loadProject(): void {
@@ -35,19 +43,33 @@ export class ProjectById {
         next: (response) => {
           this.project = response.data;
           this.isLoading = false;
-          console.log(this.project)
         },
         error: (error) => {
           this.isLoading = false;
-          const errorMessage = error.message || 'Error loading project details. Please try again.';
-          this.snackBar.open(errorMessage, 'Close', {
-            duration: 5000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top'
-          });
+          this.showSnack(error.message || 'Error loading project details.');
         }
       });
     }
+  }
+
+  loadGroups(): void {
+    this.projectService.getUserGroups(this.pageNumber, this.pageSize).subscribe({
+      next: (res) => {
+        this.groups = res.data.content;
+        this.totalElements = res.data.totalElements;
+      },
+      error: () => {
+        this.showSnack('Error fetching user groups.');
+      }
+    });
+  }
+
+  showSnack(message: string): void {
+    this.snackBar.open(message, 'Close', {
+      duration: 4000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top'
+    });
   }
 
   calculateDaysRemaining(dueDate: string | undefined): number {
@@ -55,8 +77,7 @@ export class ProjectById {
     const due = new Date(dueDate);
     const today = new Date();
     const diffTime = due.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays > 0 ? diffDays : 0;
+    return Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
   }
 
   openAddClientDialog(): void {
@@ -64,20 +85,19 @@ export class ProjectById {
       width: '600px',
       data: { isClient: true }
     });
-
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.loadProject(); // Refresh project data after adding client
-        this.snackBar.open('Client added successfully', 'Close', {
-          duration: 3000,
-          horizontalPosition: 'center',
-          verticalPosition: 'top'
-        });
+        this.loadProject();
+        this.showSnack('Client added successfully');
       }
     });
   }
 
   openAddTeamMemberDialog(): void {
-   this.router.navigate(['layout/incidents-dashboard', this.project.description, this.project.name])
+    this.router.navigate(['layout/incidents-dashboard', this.project.description, this.project.name]);
+  }
+
+  showMembers(group: Content): void {
+    this.router.navigate(['/layout/members-list', group.id,group.groupName,group.description]);
   }
 }

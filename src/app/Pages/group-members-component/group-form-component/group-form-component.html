@@ -1,0 +1,47 @@
+<div class="p-6 w-full max-w-md mx-auto">
+  <h2 class="text-lg font-semibold text-gray-800 mb-4">Create New Group</h2>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4">
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Group Name</label>
+      <input
+        formControlName="groupName"
+        type="text"
+        placeholder="Enter group name"
+        class="w-full border border-gray-300 rounded-lg p-2 focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+      />
+      <small *ngIf="form.controls['groupName'].invalid && form.controls['groupName'].touched"
+        class="text-red-500 text-xs">Group name is required (min 3 chars)</small>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+      <textarea
+        formControlName="description"
+        rows="3"
+        placeholder="Enter group description"
+        class="w-full border border-gray-300 rounded-lg p-2 focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+      ></textarea>
+      <small *ngIf="form.controls['description'].invalid && form.controls['description'].touched"
+        class="text-red-500 text-xs">Description is required (min 5 chars)</small>
+    </div>
+
+    <div class="flex justify-end gap-2 pt-4">
+      <button
+        type="button"
+        (click)="close()"
+        class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition"
+      >
+        Cancel
+      </button>
+      <button
+        type="submit"
+        [disabled]="loading"
+        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+      >
+        <span *ngIf="!loading">Save</span>
+        <span *ngIf="loading" class="animate-pulse">Saving...</span>
+      </button>
+    </div>
+  </form>
+</div>
