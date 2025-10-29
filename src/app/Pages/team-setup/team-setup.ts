@@ -6,22 +6,7 @@ import { CommonService } from '../../Common/services/common-service';
 import { filter, take } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Location } from '@angular/common';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
-// export interface Assignment {
-//   id: number;
-//   userId: number;
-//   targetType: string;
-//   targetId: number;
-//   role: string;
-//   active: boolean;
-//   username: string | null;
-//   fullName: string | null;
-//   primaryContact: string | null;
-//   password: string | null;
-//   email: string | null;
-// }
 
 @Component({
   selector: 'app-team-setup',
@@ -49,7 +34,6 @@ export class TeamSetup {
   private commonService = inject(CommonService);
   private snackBar = inject(MatSnackBar);
   private route = inject(ActivatedRoute);
-  private location = inject(Location);
   private fb = inject(FormBuilder);
   private router = inject(Router);
 
@@ -230,35 +214,42 @@ export class TeamSetup {
     return words.map(w => w[0]?.toUpperCase() || '').join('').slice(0, 2);
   }
 
-  getDisplayRole(role: string): string {
-    const roleMap: { [key: string]: string } = {
-      'ROLE_ADMIN': 'System Admin',
-      'PROJECT_MANAGER': 'Project Manager',
-      'TECH_LEAD': 'Tech Lead',
-      'DEVELOPER': 'Developer',
-      'QA': 'QA',
-      'DESIGNER': 'Designer',
-      'BUSINESS_ANALYST': 'Business Analyst',
-      'DEVOPS': 'DevOps',
-      'CLIENT_ADMIN': 'Client Admin' // Added for new role in response
-    };
-    return roleMap[role] || role.replace(/_/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
-  }
+ getDisplayRole(role?: string): string {
+  if (!role) return 'N/A'; // or 'No Role' / '-'
+  const roleMap: { [key: string]: string } = {
+    'ROLE_ADMIN': 'System Admin',
+    'PROJECT_MANAGER': 'Project Manager',
+    'TECH_LEAD': 'Tech Lead',
+    'DEVELOPER': 'Developer',
+    'QA': 'QA',
+    'DESIGNER': 'Designer',
+    'BUSINESS_ANALYST': 'Business Analyst',
+    'DEVOPS': 'DevOps',
+    'CLIENT_ADMIN': 'Client Admin'
+  };
+  return roleMap[role] ||
+    role.replace(/_/g, ' ')
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+}
 
-  getRoleColor(role: string): string {
-    const colorMap: { [key: string]: string } = {
-      'ROLE_ADMIN': 'bg-blue-100 text-blue-700',
-      'PROJECT_MANAGER': 'bg-purple-100 text-purple-700',
-      'TECH_LEAD': 'bg-green-100 text-green-700',
-      'DEVELOPER': 'bg-green-100 text-green-700',
-      'QA': 'bg-yellow-100 text-yellow-700',
-      'DESIGNER': 'bg-pink-100 text-pink-700',
-      'BUSINESS_ANALYST': 'bg-orange-100 text-orange-700',
-      'DEVOPS': 'bg-indigo-100 text-indigo-700',
-      'CLIENT_ADMIN': 'bg-teal-100 text-teal-700' // Added for new role in response
-    };
-    return colorMap[role] || 'bg-gray-100 text-gray-700';
-  }
+getRoleColor(role?: string): string {
+  if (!role) return 'bg-gray-100 text-gray-400'; // default for empty role
+  const colorMap: { [key: string]: string } = {
+    'ROLE_ADMIN': 'bg-blue-100 text-blue-700',
+    'PROJECT_MANAGER': 'bg-purple-100 text-purple-700',
+    'TECH_LEAD': 'bg-green-100 text-green-700',
+    'DEVELOPER': 'bg-green-100 text-green-700',
+    'QA': 'bg-yellow-100 text-yellow-700',
+    'DESIGNER': 'bg-pink-100 text-pink-700',
+    'BUSINESS_ANALYST': 'bg-orange-100 text-orange-700',
+    'DEVOPS': 'bg-indigo-100 text-indigo-700',
+    'CLIENT_ADMIN': 'bg-teal-100 text-teal-700'
+  };
+  return colorMap[role] || 'bg-gray-100 text-gray-700';
+}
+
 
   isFirstPage(): boolean {
     return this.pageNumber === 0;

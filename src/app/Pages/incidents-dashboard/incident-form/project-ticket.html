@@ -1,179 +1,99 @@
-<!-- create-new-incident.component.html -->
-<div class="p-6 bg-white rounded-lg max-w-4xl mx-auto">
-    <h1 class="text-2xl font-bold text-gray-800 mb-2">Create New Incident</h1>
-    <p class="text-sm text-gray-500 mb-6">Fill out the form below to create a new incident report for tracking and
-        resolution.</p>
+<!-- src/app/pages/incidents-dashboard/incident-form/incident-form.component.html -->
+<div class="p-6 bg-white rounded-lg max-w-2xl mx-auto">
+  <h2 class="text-xl font-bold text-gray-800 mb-2">Create New Incident</h2>
+  <p class="text-sm text-gray-500 mb-6">Fill out the form to create a new incident.</p>
 
-    <form>
-        <!-- Basic Information -->
-        <div class="mb-8">
-            <h2 class="text-lg font-semibold text-blue-600 mb-4 flex items-center">
-                <span class="w-2 h-2 bg-blue-600 rounded-full mr-2"></span> Basic Information
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Incident Title *</label>
-                    <input type="text" placeholder="Enter incident title"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Incident ID</label>
-                    <input type="text" value="INC-2024-001724" disabled
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed">
-                </div>
-            </div>
-            <div class="mt-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Description *</label>
-                <textarea placeholder="Provide detailed description of the incident"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 h-24"></textarea>
-            </div>
-            <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Priority *</label>
-                    <select
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white">
-                        <option>Select Priority</option>
-                    </select>
-                    <mat-icon
-                        class="absolute right-3 top-9 text-gray-500 pointer-events-none">arrow_drop_down</mat-icon>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Severity</label>
-                    <select
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white">
-                        <option>Select Severity</option>
-                    </select>
-                    <mat-icon
-                        class="absolute right-3 top-9 text-gray-500 pointer-events-none">arrow_drop_down</mat-icon>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                    <select
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white">
-                        <option>Select Category</option>
-                    </select>
-                    <mat-icon
-                        class="absolute right-3 top-9 text-gray-500 pointer-events-none">arrow_drop_down</mat-icon>
-                </div>
-            </div>
-        </div>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5">
+    <!-- Title -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Title *</label>
+      <input
+        type="text"
+        formControlName="title"
+        placeholder="Enter incident title"
+        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        [class.border-red-500]="form.get('title')?.invalid && form.get('title')?.touched">
+      <p *ngIf="form.get('title')?.invalid && form.get('title')?.touched" class="text-red-500 text-xs mt-1">
+        Title is required.
+      </p>
+    </div>
 
-        <!-- Assignment & Project -->
-        <div class="mb-8">
-            <h2 class="text-lg font-semibold text-blue-600 mb-4 flex items-center">
-                <span class="w-2 h-2 bg-blue-600 rounded-full mr-2"></span> Assignment & Project
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="relative">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Assigned Project *</label>
-                    <select
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white">
-                        <option></option>
-                    </select>
-                    <mat-icon
-                        class="absolute right-3 top-9 text-gray-500 pointer-events-none">arrow_drop_down</mat-icon>
-                </div>
-                <div class="relative">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Assigned To</label>
-                    <select
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white">
-                        <option>Sarah Johnson - Support Team</option>
-                    </select>
-                    <mat-icon
-                        class="absolute right-3 top-9 text-gray-500 pointer-events-none">arrow_drop_down</mat-icon>
-                </div>
-            </div>
-            <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Reporter</label>
-                    <div class="flex items-center w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100">
-                        <img src="path/to/avatar.jpg" alt="John Smith" class="w-6 h-6 rounded-full mr-2">
-                        <span>John Smith</span>
-                    </div>
-                </div>
-                <div class="relative">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Department</label>
-                    <select
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white">
-                        <option>IT Operations</option>
-                    </select>
-                    <mat-icon
-                        class="absolute right-3 top-9 text-gray-500 pointer-events-none">arrow_drop_down</mat-icon>
-                </div>
-                <div class="relative">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
-                    <select
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white">
-                        <option>Office location, system</option>
-                    </select>
-                    <mat-icon
-                        class="absolute right-3 top-9 text-gray-500 pointer-events-none">arrow_drop_down</mat-icon>
-                </div>
-            </div>
-        </div>
+    <!-- Description -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Description *</label>
+      <textarea
+        formControlName="description"
+        placeholder="Describe the incident"
+        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 h-28 resize-none"
+        [class.border-red-500]="form.get('description')?.invalid && form.get('description')?.touched">
+      </textarea>
+      <p *ngIf="form.get('description')?.invalid && form.get('description')?.touched" class="text-red-500 text-xs mt-1">
+        Description is required.
+      </p>
+    </div>
 
-        <!-- Additional Details -->
-        <div class="mb-8">
-            <h2 class="text-lg font-semibold text-blue-600 mb-4 flex items-center">
-                <span class="w-2 h-2 bg-blue-600 rounded-full mr-2"></span> Additional Details
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">List affected services or
-                        systems</label>
-                    <textarea placeholder="List affected services or systems"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 h-24"></textarea>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Business Impact</label>
-                    <textarea placeholder="Describe business impact"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 h-24"></textarea>
-                </div>
-            </div>
-            <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="relative">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
-                    <input type="text" placeholder="dd mm yyyy"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <mat-icon class="absolute right-3 top-9 text-gray-500 cursor-pointer">calendar_today</mat-icon>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Tags</label>
-                    <input type="text" placeholder="Add tags (comma separated)"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-            </div>
-        </div>
+    <!-- Priority & Due Date -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Priority -->
+      <div class="relative">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Priority *</label>
+        <select
+          formControlName="priority"
+          class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
+          [class.border-red-500]="form.get('priority')?.invalid && form.get('priority')?.touched">
+          <option value="" disabled>Select Priority</option>
+          <option value="HIGH">HIGH</option>
+          <option value="MEDIUM">MEDIUM</option>
+          <option value="LOW">LOW</option>
+        </select>
+        <mat-icon class="absolute right-3 top-9 text-gray-500 pointer-events-none">arrow_drop_down</mat-icon>
+        <p *ngIf="form.get('priority')?.invalid && form.get('priority')?.touched" class="text-red-500 text-xs mt-1">
+          Priority is required.
+        </p>
+      </div>
 
-        <!-- Attachments -->
-        <div class="mb-8">
-            <h2 class="text-lg font-semibold text-blue-600 mb-4 flex items-center">
-                <span class="w-2 h-2 bg-blue-600 rounded-full mr-2"></span> Attachments
-            </h2>
-            <div class="border-2 border-dashed border-gray-300 rounded-md p-6 text-center">
-                <mat-icon class="text-4xl text-gray-400 mb-2">cloud_upload</mat-icon>
-                <p class="text-sm text-gray-600">Drag and drop files here, or click to select</p>
-                <p class="text-xs text-gray-500 mt-1">Supported: PDF, DOC, DOCX, XLS, XLSX, PNG, JPG [Max 10MB]</p>
-                <button type="button"
-                    class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">Choose
-                    Files</button>
-            </div>
-        </div>
+      <!-- Due Date -->
+      <div class="relative">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Due Date *</label>
+        <input
+          type="text"
+          [matDatepicker]="picker"
+          formControlName="dueDate"
+          placeholder="Select date"
+          class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          [class.border-red-500]="form.get('dueDate')?.invalid && form.get('dueDate')?.touched">
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-icon class="absolute right-3 top-9 text-gray-500 cursor-pointer" (click)="picker.open()">calendar_today</mat-icon>
+        <p *ngIf="form.get('dueDate')?.invalid && form.get('dueDate')?.touched" class="text-red-500 text-xs mt-1">
+          Due date is required.
+        </p>
+      </div>
+    </div>
 
-        <!-- Footer or version -->
-        <div class="footer-buttons">
-            <button type="button"
-                class="px-4 py-2 bg-blue-600 text-white cursor-pointer rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 flex justify-center items-center"><mat-icon>add</mat-icon>Create
-                Incident</button>
-            <button type="button"
-                class="bg-transparent hover:bg-blue-500 cursor-pointer text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded flex justify-center items-center">
-                <mat-icon>save</mat-icon>Save as Draft
-            </button>
-            <button type="button" (click)="goBack()"
-                class="bg-transparent hover:bg-blue-500 cursor-pointer text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded flex justify-center items-center">
-                <mat-icon>cancel</mat-icon>Cancel
-            </button>
-        </div>
+    <!-- Buttons -->
+    <div class="flex justify-end gap-3 pt-4">
+      <button
+        type="button"
+        (click)="onCancel()"
+        class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 flex items-center gap-1"
+        [disabled]="submitting">
+        <mat-icon>cancel</mat-icon> Cancel
+      </button>
 
-    </form>
+      <button
+        type="submit"
+        [disabled]="form.invalid || submitting"
+        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1 relative">
+        <mat-icon *ngIf="!submitting">add</mat-icon>
+        <span *ngIf="submitting" class="flex items-center">
+          <svg class="animate-spin h-4 w-4 mr-1" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/>
+            <path fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+          </svg>
+          Creating...
+        </span>
+        <span *ngIf="!submitting">Create</span>
+      </button>
+    </div>
+  </form>
 </div>

@@ -32,17 +32,19 @@
           <button class="flex items-center px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-100 text-gray-600">
             <mat-icon class="mr-1 text-base">filter_list</mat-icon> Filter
           </button>
-          <button *ngIf="!groupId" (click)="openAddDialog()" class="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md">
+          <button *ngIf="!groupId" (click)="openAddDialog()"
+            class="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md">
             <mat-icon class="mr-1 text-base">add</mat-icon> Add Team
           </button>
-          <button *ngIf="groupId" class="flex cursor-pointer items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md" 
-                  (click)="assignTeamMembers()" [disabled]="selectedUsers.size === 0">
+          <button *ngIf="groupId"
+            class="flex cursor-pointer items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md"
+            (click)="assignTeamMembers()" [disabled]="selectedUsers.size === 0">
             <mat-icon class="mr-1 text-base">add</mat-icon> Assign Team Member
           </button>
         </div>
       </div>
     </div>
-    
+
     <div class="mt-6 bg-white rounded-md shadow-sm overflow-hidden">
       <table class="min-w-full text-sm text-left text-gray-700">
         <thead class="bg-gray-100 text-xs font-semibold uppercase text-gray-500">
@@ -57,7 +59,8 @@
         <tbody>
           <tr *ngFor="let user of users" class="border-t hover:bg-gray-50">
             <td class="px-4 py-3 flex items-center space-x-3">
-              <div class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-medium">
+              <div
+                class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-medium">
                 {{ getInitials(user.fullName) }}
               </div>
               <div>
@@ -66,13 +69,17 @@
               </div>
             </td>
             <td class="px-4 py-3">
-              <span class="px-2 py-1 rounded-full text-xs font-medium"
-                    [ngClass]="getRoleColor(user.role)">{{ getDisplayRole(user.role) }}</span>
+              <span *ngIf="user.roles && user.roles.length > 0; else noRole"
+                class="px-2 py-1 rounded-full text-xs font-medium" [ngClass]="getRoleColor(user.roles[0])">
+                {{ getDisplayRole(user.roles[0]) }}
+              </span>
+              <ng-template #noRole>
+                <span class="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-400">No Role</span>
+              </ng-template>
             </td>
             <td class="px-4 py-3">{{ user.primaryContact || 'N/A' }}</td>
             <td class="px-4 py-3">
-              <span class="px-2 py-1 rounded-full text-xs font-medium"
-                    [ngClass]="{
+              <span class="px-2 py-1 rounded-full text-xs font-medium" [ngClass]="{
                       'bg-green-100 text-green-700': user.active,
                       'bg-red-100 text-red-700': !user.active
                     }">
@@ -84,16 +91,18 @@
                 <button mat-icon-button (click)="openEditDialog(user)" aria-label="Edit user">
                   <mat-icon class="text-gray-500 text-base">edit</mat-icon>
                 </button>
-                <button mat-icon-button (click)="deleteUser(user.id)" aria-label="Delete user">
+                <button mat-icon-button (click)="deleteUser(user.userIds[0])" aria-label="Delete user">
                   <mat-icon class="text-gray-500 text-base">delete</mat-icon>
                 </button>
               </ng-container>
               <ng-container *ngIf="groupId">
-                <button mat-icon-button (click)="startAssignment(user.userIds[0])" aria-label="Assign user to group" 
-                        [disabled]="isSelected(user.userIds[0])" [ngClass]="{'text-gray-300': isSelected(user.userIds[0]), 'text-blue-500': !isSelected(user.userIds[0])}">
+                <button mat-icon-button (click)="startAssignment(user.userIds[0])" aria-label="Assign user to group"
+                  [disabled]="isSelected(user.userIds[0])"
+                  [ngClass]="{'text-gray-300': isSelected(user.userIds[0]), 'text-blue-500': !isSelected(user.userIds[0])}">
                   <mat-icon class="text-base">person_add</mat-icon>
                 </button>
-                <button *ngIf="isSelected(user.userIds[0])" mat-icon-button (click)="cancelSelection(user.userIds[0])" aria-label="Cancel assignment" class="text-red-500">
+                <button *ngIf="isSelected(user.userIds[0])" mat-icon-button (click)="cancelSelection(user.userIds[0])"
+                  aria-label="Cancel assignment" class="text-red-500">
                   <mat-icon class="text-base">person_remove</mat-icon>
                 </button>
               </ng-container>
@@ -104,23 +113,26 @@
 
       <!-- Pagination -->
       <div class="flex justify-between items-center p-4 text-sm text-gray-600 border-t">
-        <span>Showing {{ (pageNumber * pageSize) + 1 }}–{{ (pageNumber * pageSize) + users.length }} of {{ totalElements }} users</span>
+        <span>Showing {{ (pageNumber * pageSize) + 1 }}–{{ (pageNumber * pageSize) + users.length }} of {{ totalElements
+          }} users</span>
         <div class="flex items-center space-x-1">
-          <button (click)="previousPage()" [disabled]="isFirstPage()" class="px-2 py-1 border rounded hover:bg-gray-100" aria-label="Previous page">Previous</button>
-          <button (click)="nextPage()" [disabled]="isLastPage()" class="px-2 py-1 border rounded hover:bg-gray-100" aria-label="Next page">Next</button>
+          <button (click)="previousPage()" [disabled]="isFirstPage()" class="px-2 py-1 border rounded hover:bg-gray-100"
+            aria-label="Previous page">Previous</button>
+          <button (click)="nextPage()" [disabled]="isLastPage()" class="px-2 py-1 border rounded hover:bg-gray-100"
+            aria-label="Next page">Next</button>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Role Selection Popup -->
-  <div *ngIf="showRolePopup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div *ngIf="showRolePopup" class="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white p-6 rounded-md shadow-lg w-96">
       <form [formGroup]="roleForm">
         <h3 class="text-lg font-medium mb-4">Select Role for Assignment</h3>
         <div class="relative mb-4">
           <select formControlName="role"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white">
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white">
             <option value="">Select role</option>
             <option value="PROJECT_MANAGER">Project Manager</option>
             <option value="DEVELOPER">Developer</option>
@@ -131,13 +143,15 @@
           </select>
           <mat-icon class="absolute right-3 top-2.5 text-gray-500 pointer-events-none">arrow_drop_down</mat-icon>
           <mat-error *ngIf="roleForm.get('role')?.invalid && roleForm.get('role')?.touched"
-                     class="text-sm text-red-600 mt-1">
+            class="text-sm text-red-600 mt-1">
             Role is required
           </mat-error>
         </div>
         <div class="flex justify-end space-x-2">
-          <button type="button" (click)="closeRolePopup()" class="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-100">Cancel</button>
-          <button type="button" (click)="confirmRoleSelection()" [disabled]="roleForm.invalid" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Select</button>
+          <button type="button" (click)="closeRolePopup()"
+            class="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-100">Cancel</button>
+          <button type="button" (click)="confirmRoleSelection()" [disabled]="roleForm.invalid"
+            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Select</button>
         </div>
       </form>
     </div>

@@ -37,7 +37,7 @@ export class AddTeamMember {
       employeeEmail: ['', [Validators.required, Validators.email]],
       role: [this.isClient ? 'CLIENT_ADMIN' : '', this.isClient ? [] : [Validators.required]],
       employeeContact: ['', [Validators.required, Validators.pattern('^\\+?[0-9]{10,15}$')]],
-      password: ['', this.isEdit ? [] : [Validators.required, Validators.minLength(8)]]
+      password: ['', this.isEdit ? [] : [Validators.required, Validators.minLength(2)]]
     });
 
     if (this.isEdit && this.data) {
@@ -57,7 +57,11 @@ export class AddTeamMember {
         userId: this.isEdit ? this.data?.userId : null,
         targetType: 'ORGANIZATION',
         targetId: this.user.id,
-        role: this.isClient ? 'CLIENT_ADMIN' : this.addUserForm.value.role,
+        roles: this.isClient 
+    ? ['CLIENT_ADMIN'] 
+    : Array.isArray(this.addUserForm.value.role)
+      ? this.addUserForm.value.role
+      : [this.addUserForm.value.role],
         active: this.isEdit ? this.data?.active : true,
         username: this.addUserForm.value.employeeEmail,
         fullName: this.addUserForm.value.employeeName,

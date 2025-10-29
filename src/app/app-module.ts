@@ -21,8 +21,10 @@ import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { IncidentsDashboard } from './Pages/incidents-dashboard/incidents-dashboard';
 import { ProjectDetailsForm } from './Pages/projects/project-details-form/project-details-form';
-import { GroupMembersComponent } from './Pages/group-members-component/group-members-component';
-import { GroupFormComponent } from './Pages/group-members-component/group-form-component/group-form-component';
+import { GroupFormComponent } from './Pages/groups-component/group-form-component/group-form-component';
+import { GroupsComponent } from './Pages/groups-component/groups-component';
+import { ClientComponent } from './Pages/client-component/client-component';
+import { GroupMembersComponent } from './Pages/groups-component/group-members-component/group-members-component';
 
 export function initializeApiConfig(apiConfigService: CommonService) {
   return () => apiConfigService.loadConfig();
@@ -42,7 +44,9 @@ export function initializeApiConfig(apiConfigService: CommonService) {
     AddTeamMember,
     IncidentsDashboard,
     GroupMembersComponent,
-    GroupFormComponent
+    GroupFormComponent,
+    GroupsComponent,
+    ClientComponent
   ],
   imports: [
     BrowserModule,

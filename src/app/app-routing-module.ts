@@ -10,7 +10,9 @@ import { loginGuard } from './Common/guards/login-guard';
 import { IncidentsDashboard } from './Pages/incidents-dashboard/incidents-dashboard';
 import { ProjectDetailsForm } from './Pages/projects/project-details-form/project-details-form';
 import { ProjectTicket } from './Pages/incidents-dashboard/incident-form/project-ticket';
-import { GroupMembersComponent } from './Pages/group-members-component/group-members-component';
+import { GroupsComponent } from './Pages/groups-component/groups-component';
+import { ClientComponent } from './Pages/client-component/client-component';
+import { GroupMembersComponent } from './Pages/groups-component/group-members-component/group-members-component';
 
 const routes: Routes = [
    { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -21,11 +23,13 @@ const routes: Routes = [
       { path: 'project-details', component: ProjectDetailsForm },
       { path: 'project', component: Projects },
       { path: 'incidents-dashboard/:id', component: IncidentsDashboard },
-      { path: 'incidents-Form', component: ProjectTicket },
+      { path: 'incidents-Form/:id', component: ProjectTicket },
       { path: 'team-setUp', component: TeamSetup },
       { path: 'project-details/:id', component: ProjectById},
+      { path: 'project-client', component: ClientComponent},
       { path: 'members-list/:groupId/:groupName/:description/:projectId',
-         component: GroupMembersComponent }
+         component: GroupMembersComponent },
+         { path: 'project-groups/:id', component: GroupsComponent},
     ],
     canActivate: [authGuard]
     },

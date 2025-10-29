@@ -53,3 +53,29 @@
   box-shadow: #d6d6e7 0 3px 7px inset;
   transform: translateY(2px);
 }
+ 
+.mat-icon {
+    padding: 1.2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    
+}
+
+.mat-icon.report_problem {
+  background: #FEE2E2;
+  color: red;
+}
+
+.mat-icon.groups {
+  background-color: #FFEDD5;
+}
+
+.mat-icon.assignment {
+background-color: #FEF9C3;
+}
+
+.mat-icon.analytics {
+ background-color: #DCFCE7;
+}

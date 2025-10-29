@@ -1,0 +1,10 @@
+{
+  "hosting": {
+    "public": "dist/CircuitGaurd/browser",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}

@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Auth } from '../../Services/auth';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { CommonService } from '../../../Common/services/common-service';
 
 @Component({
   selector: 'app-login',
@@ -14,12 +15,14 @@ export class Login {
   loginForm: FormGroup;
   isLoading = false;
   hidePassword = true;
+  
 
   constructor(
     private fb: FormBuilder,
     private authService: Auth,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private userService: CommonService,
   ) {
     this.loginForm = this.fb.group({
       username: ['', [Validators.required]],
@@ -39,6 +42,27 @@ export class Login {
       next: (response: any) => {
         this.isLoading = false;
         localStorage.setItem('token', response.token);
+         if (this.authService.isLoggedIn()) {
+      this.userService.fetchUserDetails().subscribe({
+        next: (user) => {
+          const isAdmin = user.roles.some(
+            (role) => role.name === 'ROLE_BUSINESS_ADMIN'
+          );
+          if (isAdmin) {
+            this.router.navigate(['/layout']);
+          } else {
+            this.router.navigate(['/login']);
+          }
+        },
+        error: (err) => {
+          console.error('Failed to load user details', err);
+          this.authService.logout();
+          this.router.navigate(['/login']);
+        },
+      });
+    } else {
+      this.router.navigate(['/login']);
+    }
         localStorage.setItem('refreshToken', response.refreshToken);
         this.router.navigate(['/layout/project']);
         this.snackBar.open('Login successful!', 'Close', {
