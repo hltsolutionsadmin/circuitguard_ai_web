@@ -38,7 +38,7 @@ export class Project {
       .set('page', page.toString())
       .set('size', size.toString())
 
-    return this.http.get<ProjectResponse>(`${this.apiUrl}/${organizationId}`, { params }).pipe(
+    return this.http.get<ProjectResponse>(`${this.apiUrl}/organization/${organizationId}`, { params }).pipe(
       catchError(this.handleError)
     );
   }
@@ -49,9 +49,9 @@ export class Project {
     );
   }
 
-    getUserGroups(page: number = 0, size: number = 10): Observable<projectGroupResponse> {
-    const url = `${this.baseUrl}?page=${page}&size=${size}`;
-    return this.http.get<projectGroupResponse>(url);
+    getUserGroups(id: any, page: number = 0, size: number = 10): Observable<any> {
+    const url = `${this.baseUrl}/project/${id}?page=${page}&size=${size}`;
+    return this.http.get<any>(url);
   } 
 
   private handleError(error: HttpErrorResponse): Observable<never> {

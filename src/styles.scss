@@ -25,20 +25,24 @@ body {
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
-html, body {
-  scrollbar-width: none; 
+/* Hide scrollbar but allow scrolling */
+
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+/* Firefox */
+html {
+  scrollbar-width: none; /* hides scrollbar but keeps scroll functional */
+}
+
+/* IE, Edge (legacy) */
+body {
   -ms-overflow-style: none;
 }
 
-html::-webkit-scrollbar,
-body::-webkit-scrollbar {
-  display: none; 
-}
-
-body {
-  overflow-y: scroll;
-  overflow-x: hidden;
-}
 
 ::ng-deep .cdk-overlay-backdrop {
   background-color: rgba(0, 0, 0, 0.5) !important; 

@@ -64,8 +64,7 @@ export class Projects implements OnInit {
   this.projectService.getProjects(this.currentPage, this.pageSize, this.organizationId).subscribe({
     next: (response: ProjectResponse) => {
       if (response?.data) {
-        // since it's a single object
-        this.projects.push(response.data);
+        this.projects = response.data.content;
       }
       this.hasMore = false;
       this.currentPage++;

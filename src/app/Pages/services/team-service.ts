@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
 
@@ -8,8 +8,7 @@ export interface Assignment {
   userIds: number[]; // Added to match API response
   targetType: string;
   targetId: number;
-  role: string;
-  roles: string[] | null; // Added for completeness
+  roles: string[] | null; 
   groupIds: number[] | null; // Added for completeness
   active: boolean;
   username: string | null;
@@ -67,12 +66,36 @@ export interface GetAssignmentsResponse {
   };
 }
 
+export interface User {
+  id: number;
+  fullName: string;
+  username: string;
+  primaryContact: string;
+  recentActivityDate: string;
+  roles: string[];
+}
+
+export interface Page<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  number: number;
+  size: number;
+}
+
+export interface ApiResponse {
+  message: string;
+  status: string;
+  data: Page<User>;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class TeamService {
   private apiUrl = '/api/usermanagement/api/assignments';
   private readonly baseUrl = '/api/'
+  private readonly baseUrls = '/api/usermanagement/api/assignments';
 
   constructor(private http: HttpClient) {}
 
@@ -93,11 +116,19 @@ export class TeamService {
   }
 
   assignToProject(request: AssignProjectRequest): Observable<void> {
-      const url = `${this.baseUrl}usermanagement/projects`;
+      const url = `${this.baseUrl}usermanagement/api/assignments`;
       return this.http.post<void>(url, request).pipe(
         catchError(this.handleError)
       );
     }
+
+    getGroupMembers(groupId: number, page: number = 0, size: number = 10): Observable<ApiResponse> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    return this.http.get<ApiResponse>(`${this.baseUrls}/${groupId}/users`, { params });
+  }
 
     private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'An unexpected error occurred';
@@ -111,4 +142,5 @@ export class TeamService {
     console.error(errorMessage);
     return throwError(() => new Error(errorMessage));
   }
+
 }

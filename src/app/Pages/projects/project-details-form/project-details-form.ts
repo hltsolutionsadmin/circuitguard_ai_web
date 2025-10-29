@@ -120,7 +120,7 @@ export class ProjectDetailsForm {
       next: (res: any) => {
         if(res) {
           const responseId = res.data.id
-          this.route.navigate([`/layout/project-details/${responseId}`])
+          this.route.navigate([`/layout/incidents-dashboard/${responseId}`])
            this.isLoading = false;
         this.snackBar.open('Project created successfully!', 'Close', {
           duration: 3000,
