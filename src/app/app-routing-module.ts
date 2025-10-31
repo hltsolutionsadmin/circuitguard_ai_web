@@ -26,10 +26,9 @@ const routes: Routes = [
       { path: 'incidents-Form/:id', component: ProjectTicket },
       { path: 'team-setUp', component: TeamSetup },
       { path: 'project-details/:id', component: ProjectById},
-      { path: 'project-client', component: ClientComponent},
-      { path: 'members-list/:groupId/:groupName/:description/:projectId',
-         component: GroupMembersComponent },
-         { path: 'project-groups/:id', component: GroupsComponent},
+      { path: 'project-client/:id', component: ClientComponent},
+      { path: 'members-list/:groupId/:groupName/:description/:projectId',component: GroupMembersComponent },
+      { path: 'project-groups/:id', component: GroupsComponent},
     ],
     canActivate: [authGuard]
     },

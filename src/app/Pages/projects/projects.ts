@@ -1,10 +1,10 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Project, ProjectModel } from '../services/project';
 import { ProjectResponse } from './project-model';
 import { filter, take } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { CommonService } from '../../Common/services/common-service';
+import { Auth } from '../../auth/Services/auth';
 
 @Component({
   selector: 'app-projects',
@@ -15,8 +15,9 @@ import { CommonService } from '../../Common/services/common-service';
 export class Projects implements OnInit {
   projects: ProjectModel[] = [];
   currentPage = 0;
-  pageSize = 10;
+  pageSize = 9;
   organizationId!: number;
+  totalElements!: number;
   hasMore = true;
   isLoading = false;
   user: any;
@@ -25,7 +26,7 @@ export class Projects implements OnInit {
     private projectService: Project,
     private router: Router,
     private snackBar: MatSnackBar,
-    private commonService: CommonService
+    private commonService: Auth
   ) {}
 
 
@@ -52,36 +53,70 @@ export class Projects implements OnInit {
       });
   }
 
- loadProjects(): void {
-  if (this.isLoading || !this.hasMore) return;
-  if (!this.organizationId) {
-    console.warn('Organization ID not available yet.');
-    return;
-  }
+loadProjects(): void {
+  if (this.isLoading || !this.organizationId) return;
 
   this.isLoading = true;
 
-  this.projectService.getProjects(this.currentPage, this.pageSize, this.organizationId).subscribe({
-    next: (response: ProjectResponse) => {
-      if (response?.data) {
-        this.projects = response.data.content;
+  this.projectService.getProjects(this.currentPage, this.pageSize, this.organizationId)
+    .subscribe({
+      next: (response: ProjectResponse) => {
+        const newProjects = response?.data?.content || [];
+
+        if (this.currentPage === 0) {
+          this.projects = newProjects; // first page
+        } else {
+          this.projects = [...this.projects, ...newProjects]; // append
+        }
+
+        this.totalElements = response?.data?.totalElements || this.projects.length;
+
+        // ✅ Determine if more projects exist
+        this.hasMore = this.projects.length < this.totalElements;
+
+        this.currentPage++; // move to next page
+        this.isLoading = false;
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.showError('Error loading projects. Please try again.');
       }
-      this.hasMore = false;
-      this.currentPage++;
-      this.isLoading = false;
-    },
-    error: (error) => {
-      this.isLoading = false;
-      const errorMessage = error.message || 'Error loading projects. Please try again.';
-      this.snackBar.open(errorMessage, 'Close', {
-        duration: 5000,
-        horizontalPosition: 'center',
-        verticalPosition: 'top'
-      });
-    }
-  });
+    });
 }
 
+
+selectedStatus = 'All Status';
+
+onStatusChange(status: string): void {
+  if (status === 'All Status') {
+    this.currentPage = 0;
+    this.hasMore = true;
+    this.projects = [];
+    this.loadProjects();
+  } else {
+    this.isLoading = true;
+    this.projectService.getProjectsByStatus(status,this.organizationId).subscribe({
+      next: (response: ProjectResponse) => {
+        this.projects = response?.data?.content || [];
+        this.totalElements = response?.data?.totalElements || 0;
+        this.hasMore = false;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error fetching filtered projects:', error);
+      }
+    });
+  }
+}
+
+  private showError(message: string): void {
+    this.snackBar.open(message, 'Close', {
+      duration: 4000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top'
+    });
+  }
 
   loadMore(): void {
     this.loadProjects();

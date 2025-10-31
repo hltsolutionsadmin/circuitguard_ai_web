@@ -1,7 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { AddTeamMember } from '../team-setup/add-team-member/add-team-member';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute } from '@angular/router';
+import { GroupService } from '../services/group-service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-client-component',
@@ -9,18 +12,38 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   templateUrl: './client-component.html',
   styleUrl: './client-component.scss'
 })
-export class ClientComponent {
+export class ClientComponent implements OnInit{
 
   private dialog = inject(MatDialog);
    private snackBar = inject(MatSnackBar);
+   private paramRoute = inject(ActivatedRoute);
+   private groupService = inject(GroupService);
+   private Location = inject(Location)
+   projectId : any;
+   clients: any;
+   constructor() {
+    this.projectId = this.paramRoute.snapshot.paramMap.get('id')
+   }
    
+   ngOnInit(): void {
+     this.getProjectClients();
+   }
+
+   getProjectClients() {
+    this.groupService.getClientMembers(this.projectId).subscribe({
+      next:(res) => {
+         this.clients = res.data.content
+      }
+    })
+   }
    openAddClientDialog(): void {
       const dialogRef = this.dialog.open(AddTeamMember, {
         width: '600px',
-        data: { isClient: true }
+        data: { isClient: true ,projectId: this.projectId }
       });
       dialogRef.afterClosed().subscribe((result) => {
         if (result) {
+          this.getProjectClients();
           this.showSnack('Client added successfully');
         }
       });
@@ -32,5 +55,9 @@ export class ClientComponent {
       horizontalPosition: 'center',
       verticalPosition: 'top'
     });
+  }
+
+    backToProj() {
+    this.Location.back();
   }
 }

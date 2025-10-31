@@ -1,0 +1,182 @@
+<div class="h-full flex flex-col bg-white w-96 shadow-xl" style="margin-top: 5rem; height: 85%;">
+  <div class="flex items-start justify-between px-5 py-4 border-b border-gray-200 sticky top-0 bg-white z-10">
+    <section class="flex">
+      <h1 class="text-2xl font-bold text-gray-900 leading-tight">{{ incident.title }}</h1>
+    </section>
+
+    <div class="flex items-center space-x-2">
+      <mat-icon class="text-xl text-gray-500 hover:text-gray-700 cursor-pointer">share</mat-icon>
+      <button (click)="close()" class="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="flex-1 overflow-y-auto p-6 space-y-6">
+    <section>
+      <div class="flex items-center space-x-2 mb-2">
+        <mat-icon class="text-lg text-green-600">check_box</mat-icon>
+        <p class="text-sm font-medium text-gray-600">{{ incident.id }}</p>
+      </div>
+    </section>
+
+    <section class="flex items-center space-x-3">
+      <div class="relative inline-block text-left">
+        <select [(ngModel)]="incident.status" (ngModelChange)="updateStatus($event)"
+          [ngClass]="getStatusColor(incident.status)"
+          class="block w-full py-1.5 pl-3 pr-8 rounded-md text-sm font-medium border-0 focus:ring-2 focus:ring-blue-500 focus:outline-none appearance-none transition duration-150 ease-in-out cursor-pointer">
+          <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
+        </select>
+        <mat-icon
+          class="absolute right-1 top-1/2 transform -translate-y-1/2 text-gray-600 text-lg pointer-events-none">expand_more</mat-icon>
+      </div>
+
+      <button
+        class="flex items-center justify-center p-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-50">
+        <mat-icon class="text-lg">flash_on</mat-icon>
+      </button>
+      <button
+        class="flex items-center justify-center p-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-50">
+        <mat-icon class="text-lg">add</mat-icon>
+      </button>
+    </section>
+
+    <section>
+      <h2 class="text-sm font-semibold text-gray-700 mb-2">Description</h2>
+
+      <div *ngIf="!isEditingDescription; else editMode" (click)="startEditDescription()"
+        class="text-sm text-gray-600 cursor-pointer hover:text-gray-800 p-2 -m-2 rounded">
+        <p class="italic">{{ incident.description || 'Add description...' }}</p>
+      </div>
+
+      <ng-template #editMode>
+        <textarea #descInput [(ngModel)]="editedDescription" (blur)="saveDescription()"
+          (keydown.escape)="cancelDescriptionEdit()"
+          class="description-textarea w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm text-gray-700 resize-none"
+          rows="4" placeholder="Enter description...">
+        </textarea>
+      </ng-template>
+    </section>
+
+    <section>
+      <h2 class="text-lg font-semibold text-gray-700 mb-4 flex justify-between items-center">
+        Details
+        <mat-icon class="text-gray-500 text-lg">keyboard_arrow_down</mat-icon>
+      </h2>
+      <div class="space-y-4 text-sm">
+
+        <!-- Assignee -->
+        <div class="flex items-center justify-between">
+          <span class="text-gray-500 w-1/3">Assignee</span>
+          <div class="w-2/3 relative cursor-pointer" (click)="$event.stopPropagation()">
+            <button (click)="toggleAssigneeDropdown($event)"
+              class="flex items-center cursor-pointer space-x-2 text-gray-800 hover:bg-gray-50 p-1 rounded-md w-full text-left">
+              <div
+                class="flex-shrink-0 w-6 h-6 rounded-full bg-orange-400 flex items-center justify-center text-xs font-bold text-white">
+                {{ getInitials(incident.assignedToName) }}
+              </div>
+              <span class="font-medium truncate">{{ incident.assignedToName || 'Not Assigned' }}</span>
+            </button>
+
+           <div *ngIf="showAssigneeDropdown"
+     class="absolute right-0 mt-1 w-60 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-20 max-h-60 overflow-y-auto">
+  <div class="py-1">
+
+    <!-- ✅ If no members -->
+    <div *ngIf="!MembersList || MembersList.length === 0" class="px-4 py-2 text-sm text-gray-500 text-center">
+      No members found
+    </div>
+
+    <!-- ✅ Loop members -->
+     <div class="w-full flex justify-end" style="padding: 0 .5em;">
+       <a (click)="toggleAssigneeDropdown($event)"><mat-icon>cancel</mat-icon></a>
+     </div>
+    
+    <a *ngFor="let member of MembersList"
+       (click)="updateAssignee(member)"
+       class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer space-x-3">
+      <div
+        class="w-6 h-6 rounded-full bg-gray-400 flex items-center justify-center text-xs font-bold text-white">
+        {{ getInitials(member.fullName) }}
+      </div>
+      <span>{{ member.fullName }}</span>
+    </a>
+
+    <!-- Pagination loader (optional, same as before) -->
+    <div *ngIf="hasMoreMembers && !isLoadingMembers" class="border-t">
+      <button (click)="loadMoreMembers(); $event.stopPropagation()"
+              class="w-full text-left px-4 py-2 text-sm text-blue-600 hover:bg-blue-50">
+        See more...
+      </button>
+    </div>
+    <div *ngIf="isLoadingMembers" class="border-t p-2 text-center text-sm text-gray-500">
+      Loading more...
+    </div>
+  </div>
+</div>
+
+          </div>
+        </div>
+
+        <!-- Reporter -->
+        <div class="flex items-center justify-between">
+          <span class="text-gray-500 w-1/3">Reporter</span>
+          <div class="w-2/3 relative">
+            <button 
+              class="flex items-center space-x-2 text-gray-800 hover:bg-gray-50 p-1 rounded-md w-full text-left">
+              <div
+                class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-xs font-bold text-white">
+                {{ getInitials(incident.createdByName) }}
+              </div>
+              <span class="font-medium truncate">{{ incident.createdByName || 'Unknown' }}</span>
+            </button>
+
+            <!-- <div *ngIf="showReporterDropdown"
+                 class="absolute right-0 mt-1 w-60 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-20">
+              <div class="py-1">
+                <a *ngFor="let member of teamMembers"
+                   (click)="updateReporter(member); showReporterDropdown = false"
+                   class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer space-x-3">
+                  <div class="w-6 h-6 rounded-full bg-gray-400 flex items-center justify-center text-xs font-bold text-white">
+                    {{ member.initials }}
+                  </div>
+                  <span>{{ member.name }}</span>
+                </a>
+              </div>
+            </div> -->
+          </div>
+        </div>
+
+        <!-- Due Date -->
+        <div class="flex justify-between items-center">
+          <span class="text-gray-500">Due date</span>
+          <span class="text-gray-700 font-medium">{{ formatDueDate(incident.dueDate) }}</span>
+        </div>
+
+        <!-- Priority -->
+        <div class="flex justify-between items-center">
+          <span class="text-gray-500">Priority</span>
+          <div class="relative inline-block text-left">
+            <select [(ngModel)]="incident.priority" (ngModelChange)="updatePriority($event)"
+              [ngClass]="getPriorityColor(incident.priority)"
+              class="block py-1 px-2 rounded-md text-xs font-semibold border-0 focus:ring-2 focus:ring-blue-500 focus:outline-none appearance-none transition duration-150 ease-in-out cursor-pointer">
+              <option *ngFor="let priority of priorityOptions" [value]="priority">{{ priority }}</option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="pt-6 border-t border-gray-200">
+      <h2 class="text-sm font-semibold text-gray-700 mb-3">Comments</h2>
+      <textarea rows="3"
+        class="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm text-gray-700"
+        placeholder="Add a comment...">
+      </textarea>
+      <button class="mt-2 px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-md hover:bg-blue-600">
+        Save Comment
+      </button>
+    </section>
+  </div>
+</div>

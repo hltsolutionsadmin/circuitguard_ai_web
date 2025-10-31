@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TeamService, User } from '../../services/team-service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-group-members-component',
@@ -23,7 +24,7 @@ groupId: number | null = null;
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private groupService = inject(TeamService);
-
+  private Location = inject(Location)
   ngOnInit(): void {
     this.groupId = Number(this.route.snapshot.paramMap.get('groupId'));
     this.groupName = this.route.snapshot.paramMap.get('groupName') ?? '';
@@ -76,4 +77,9 @@ groupId: number | null = null;
   totalPages(): number {
     return Math.ceil(this.totalElements / this.pageSize);
   }
+
+  backToProj() {
+   this.Location.back()
+  }
 }
+
