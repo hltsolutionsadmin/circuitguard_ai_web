@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CommonService } from '../../../Common/services/common-service';
 import { filter, take } from 'rxjs';
+import { Auth } from '../../../auth/Services/auth';
 
 @Component({
   selector: 'app-project-ticket',
@@ -16,7 +17,7 @@ export class ProjectTicket {
   private dialogRef = inject(MatDialogRef<ProjectTicket>);
   private incidentService = inject(TicketService);
   private data = inject(MAT_DIALOG_DATA);
-  private commonService = inject(CommonService)
+  private commonService = inject(Auth)
 
   projectId: any;
   form!: FormGroup;

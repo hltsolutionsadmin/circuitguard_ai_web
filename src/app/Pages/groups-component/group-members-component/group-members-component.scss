@@ -78,3 +78,12 @@
   box-shadow: #d6d6e7 0 3px 7px inset;
   transform: translateY(2px);
 }
+
+.hoverBackButton:hover {
+  /* 2. Enhanced Shadow (The "Lift" Effect) */
+  /* This shadow is often called a "deep lift" */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); 
+  
+  /* 3. Slight Scale Up (Optional but nice) */
+  transform: scale(1.01);
+}

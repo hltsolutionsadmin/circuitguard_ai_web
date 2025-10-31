@@ -1,10 +1,17 @@
-<div
+<div class="dashboard-wrapper" [class.panel-open]="panelOpen">
+  <div class="dashboard-content">
+  <div
   class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-7 text-white shadow-md bg-gradient-to-r from-red-500 to-red-700"
   style="padding: 2rem 5rem;">
   <!-- Left Section -->
-  <div class="space-x-4 sm:mb-0">
-    <p class="text-2xl font-bold leading-tight">{{  project?.name }}</p>
+  <div class="space-x-4 sm:mb-0 flex items-center">
+    <div class="cursor-pointer hoverBackButton" (click)="backToProj()">
+      <mat-icon mat-icon-button>keyboard_arrow_left</mat-icon>
+    </div>
+    <div class=""><p class="text-2xl font-bold leading-tight">{{  project?.name }}</p>
     <h1 class="text-white/90 text-sm mt-1">{{ project?.description }}</h1>
+  </div>
+    
   </div>
 
   <div class="flex gap-4">
@@ -14,7 +21,10 @@
 </div>
 <div class="space-y-6 bg-gray-50 min-h-screen" style="padding: 2em 5em;">
   <!-- Top Stat Cards -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+  <div class="grid gap-4"  [ngClass]="{
+       'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5': !panelOpen,
+       'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4': panelOpen
+     }">
     <!-- Incidents -->
     <div class="flex items-center justify-between bg-white rounded-2xl shadow p-4">
       <div class="flex items-center w-full space-x-3">
@@ -27,12 +37,11 @@
     </div>
 
     <!-- Teams -->
-    <div class="flex items-center justify-between bg-white rounded-2xl cursor-pointer shadow p-4" (click)="openGroups()">
+    <div class="flex items-center justify-between bg-white rounded-2xl cursor-pointer shadow p-4 hoverCard" (click)="openGroups()">
       <div class="flex items-center w-full space-x-3">
         <mat-icon class="text-orange-500 mat-icon groups">groups</mat-icon>
         <div class="flex justify-between items-center" style="width: 80%;">
           <p class="text-sm text-gray-500">Teams</p>
-          <p class="text-lg font-semibold">4</p>
         </div>
       </div>
     </div>
@@ -43,7 +52,7 @@
         <mat-icon class="text-yellow-500 mat-icon assignment">assignment</mat-icon>
         <div class="flex justify-between items-center" style="width: 80%;">
           <p class="text-sm text-gray-500 ">Contract</p>
-          <p class="text-lg font-semibold">1</p>
+          <p class="text-lg font-semibold">0</p>
         </div>
       </div>
     </div>
@@ -58,12 +67,11 @@
       </div>
     </div>
     <!-- client user -->
-    <div class="flex items-center justify-between bg-white cursor-pointer rounded-2xl shadow p-4" (click)="openClient()">
+    <div class="flex items-center justify-between bg-white cursor-pointer rounded-2xl shadow p-4 hoverCard" (click)="openClient()">
       <div class="flex items-center w-full space-x-3">
         <mat-icon class="text-gray-400 mat-icon groups">groups</mat-icon>
         <div class="flex justify-between items-center" style="width: 80%;">
           <p class="text-sm text-gray-500">Client Users</p>
-          <!-- <p class="text-lg font-semibold">–</p> -->
         </div>
       </div>
     </div>
@@ -78,11 +86,52 @@
 
     <!-- Filters -->
     <div class="flex items-center space-x-3 mt-3 sm:mt-0">
-      <span class="text-sm text-gray-500 font-medium">View:</span>
-      <button class="px-3 py-1 text-sm font-medium rounded-full bg-blue-100 text-blue-600">All</button>
-      <button class="px-3 py-1 text-sm font-medium rounded-full text-gray-600 hover:bg-gray-100">Critical</button>
-      <button class="px-3 py-1 text-sm font-medium rounded-full text-gray-600 hover:bg-gray-100">High</button>
-    </div>
+  <span class="text-sm text-gray-500 font-medium">View:</span>
+
+  <!-- ALL -->
+  <button 
+    (click)="setPriorityFilter('ALL')"
+    class="px-3 py-1 text-sm font-medium rounded-full transition-colors"
+    [class.bg-blue-100]="selectedPriority === 'ALL'"
+    [class.text-blue-600]="selectedPriority === 'ALL'"
+    [class.text-gray-600]="selectedPriority !== 'ALL'"
+    [class.hover:bg-gray-100]="selectedPriority !== 'ALL'">
+    ALL
+  </button>
+
+  <!-- LOW -->
+  <button 
+    (click)="setPriorityFilter('LOW')"
+    class="px-3 py-1 text-sm font-medium rounded-full transition-colors"
+    [class.bg-blue-100]="selectedPriority === 'LOW'"
+    [class.text-blue-600]="selectedPriority === 'LOW'"
+    [class.text-gray-600]="selectedPriority !== 'LOW'"
+    [class.hover:bg-gray-100]="selectedPriority !== 'LOW'">
+    LOW
+  </button>
+
+  <!-- MEDIUM -->
+  <button 
+    (click)="setPriorityFilter('MEDIUM')"
+    class="px-3 py-1 text-sm font-medium rounded-full transition-colors"
+    [class.bg-blue-100]="selectedPriority === 'MEDIUM'"
+    [class.text-blue-600]="selectedPriority === 'MEDIUM'"
+    [class.text-gray-600]="selectedPriority !== 'MEDIUM'"
+    [class.hover:bg-gray-100]="selectedPriority !== 'MEDIUM'">
+    MEDIUM
+  </button>
+
+  <!-- HIGH -->
+  <button 
+    (click)="setPriorityFilter('HIGH')"
+    class="px-3 py-1 text-sm font-medium rounded-full transition-colors"
+    [class.bg-blue-100]="selectedPriority === 'HIGH'"
+    [class.text-blue-600]="selectedPriority === 'HIGH'"
+    [class.text-gray-600]="selectedPriority !== 'HIGH'"
+    [class.hover:bg-gray-100]="selectedPriority !== 'HIGH'">
+    HIGH
+  </button>
+</div>
   </div>
 
   <!-- Table -->
@@ -112,10 +161,10 @@
       </tr>
     </thead>
     <tbody class="divide-y text-sm" *ngIf="incidents.length > 0; else noIncidents">
-      <tr *ngFor="let incident of incidents" class="hover:bg-gray-50">
+      <tr *ngFor="let incident of incidents let i = index" class="hover:bg-gray-50">
         <td class="px-4 py-3"><input type="checkbox" /></td>
-        <td class="px-4 py-3 font-mono text-gray-700">{{ incident.id }}</td>
-        <td class="px-4 py-3 font-medium text-gray-800">{{ incident.title }}</td>
+        <td class="px-4 py-3 font-mono text-gray-700">{{ i + 1 }}</td>
+        <td class="px-4 py-3 font-medium text-gray-800 cursor-pointer hoverTitle" (click)="openIncidentDetails(incident)"><a>{{ incident.title }}</a></td>
         <td class="px-4 py-3">
           <span [ngClass]="priorityClass(incident.priority)" class="px-2 py-1 text-xs font-medium rounded-full">
             {{ incident.priority }}
@@ -127,9 +176,9 @@
           </span>
         </td>
         <td class="px-4 py-3">
-          <span class="text-sm text-gray-600">{{ incident.assignedToId }}</span>
+          <span class="text-sm text-gray-600">{{ incident.assignedToName }}</span>
         </td>
-        <td class="px-4 py-3 text-gray-600">{{ incident.createdById }}</td>
+        <td class="px-4 py-3 text-gray-600">{{ incident.createdByName }}</td>
         <td class="px-4 py-3 font-medium" [ngClass]="incident.dueOverdue ? 'text-red-500' : 'text-green-500'">
           {{ incident.dueDate }}
           <span *ngIf="incident.dueOverdue" class="text-xs">(Overdue)</span>
@@ -175,4 +224,15 @@
     </div>
   </div>
 </div>
+</div>
+</div>
+
+<app-incident-detail-panel-component
+    class="detail-panel"
+    [class.open]="panelOpen"
+    *ngIf="selectedIncident"
+    [incident]="selectedIncident!"
+    [MembersList]="projectAssignedMembers!"
+    (closed)="closeIncidentDetails()">
+  </app-incident-detail-panel-component>
 </div>

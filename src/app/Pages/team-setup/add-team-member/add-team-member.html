@@ -43,14 +43,14 @@
     </div>
 
     <!-- Employee Contact Number -->
-    <div>
+    <!-- <div>
       <input type="tel" formControlName="employeeContact" placeholder="{{ isClient ? 'Enter client contact number' : 'Enter employee contact number' }}"
         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
       <mat-error *ngIf="addUserForm.get('employeeContact')?.invalid && addUserForm.get('employeeContact')?.touched"
         class="text-sm text-red-600 mt-1">
         Valid mobile number is required
       </mat-error>
-    </div>
+    </div> -->
 
     <!-- Password (only for add) -->
     <div *ngIf="!isEdit">
@@ -69,7 +69,10 @@
         Cancel
       </button>
       <button type="submit" [disabled]="addUserForm.invalid"
-        class="px-4 py-2 cursor-pointer bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
+        class="px-4 py-2 cursor-pointer bg-blue-600 text-white rounded-md hover:bg-blue-700 transition" [ngClass]="{
+    'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer': !addUserForm.invalid,
+    'bg-gray-400 text-gray-200 cursor-not-allowed': addUserForm.invalid
+  }">
         {{ isEdit ? 'Update' : (isClient ? 'Add Client' : 'Add Team Member') }}
       </button>
     </div>

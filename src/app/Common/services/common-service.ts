@@ -50,7 +50,7 @@ export class CommonService {
     return `${this.config.baseUrl}${relativePath}`;
   }
 
-   private userDetailsUrl = '/api/usermanagement/user/userDetails';
+   private userDetailsUrl = 'https://fanfun.in/api/usermanagement/user/userDetails';
   private userSubject = new BehaviorSubject<UserDetails | null>(null);
   user$ = this.userSubject.asObservable();
 

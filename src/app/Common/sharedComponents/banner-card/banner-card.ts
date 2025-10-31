@@ -9,6 +9,7 @@ interface BannerButton {
 
 interface BannerConfig {
   icon?: string;
+   iconAction?: () => void;
   title: string;
   subtitle?: string;
   description?: string;

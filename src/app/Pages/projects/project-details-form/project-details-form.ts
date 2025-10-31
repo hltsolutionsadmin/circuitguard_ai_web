@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, inject, Output, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -8,6 +8,8 @@ import { Router } from '@angular/router';
 import { UserModel } from '../../../Interface/user-details';
 import { Project, ProjectModel } from '../../services/project';
 import { CommonService } from '../../../Common/services/common-service';
+import { Auth } from '../../../auth/Services/auth';
+import { Assignment, TeamService } from '../../services/team-service';
 
 @Component({
   selector: 'app-project-details-form',
@@ -22,14 +24,21 @@ export class ProjectDetailsForm {
   projectOnboardingWizard = true;
   isLoading = false;
   user!: UserModel;
+  users: Assignment[] = [];
+  clientAdmins: any;
+   totalElements: number = 0;
+  totalPages: number = 0;
+  pageNumber: number = 0;
+  pageSize: number = 10;
 
   projectDetailsForm!: FormGroup;
+  private userManagementService = inject(TeamService);
 
   constructor(
     private fb: FormBuilder,
     private projectService: Project,
     private snackBar: MatSnackBar,
-    private commonService: CommonService,
+    private commonService: Auth,
     private route : Router
   ) {}
 
@@ -38,7 +47,7 @@ export class ProjectDetailsForm {
     this.projectDetailsForm = this.fb.group({
       projectName: ['', Validators.required],
       projectDescription: ['', Validators.required],
-      projectCategory: ['', Validators.required],
+      // projectCategory: [''],
       startDate: [null, Validators.required],
       targetEndDate: [null, Validators.required],
     });
@@ -53,6 +62,7 @@ export class ProjectDetailsForm {
   next: (user: UserModel | null) => {
     if (user && user.organization?.id) {
       this.user = user;
+      this.fetchAssignments();
       console.log('User loaded in project form:', this.user);
     } else {
       console.warn('User data not available yet.');
@@ -72,6 +82,37 @@ export class ProjectDetailsForm {
   get technologyStackControls() {
     return (this.projectDetailsForm.get('technologyStack') as FormArray).controls;
   }
+
+   fetchAssignments(): void {
+  this.userManagementService
+    .getAssignments('ORGANIZATION', this.user.organization.id, this.pageNumber, this.pageSize)
+    .subscribe({
+      next: (res) => {
+        this.users = res.data.content;
+        this.totalElements = res.data.totalElements;
+        this.totalPages = res.data.totalPages;
+
+        // ✅ Filter users who have the CLIENT_ADMIN role
+        this.clientAdmins = this.users.filter(user =>
+          user.roles?.includes('CLIENT_ADMIN')
+        );
+
+        // Optional: if none found, you can set it to an empty array explicitly
+        if (this.clientAdmins.length === 0) {
+          this.clientAdmins = [];
+        }
+      },
+      error: (error) => {
+        console.error('Error fetching assignments:', error);
+        this.snackBar.open('Failed to fetch assignments.', 'Close', {
+          duration: 4000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top'
+        });
+      }
+    });
+}
+
 
   onTechStackChange(event: any, index: number) {
     const techStackArray = this.projectDetailsForm.get('technologyStack') as FormArray;
@@ -112,6 +153,7 @@ export class ProjectDetailsForm {
       type: 'INTERNAL',
       ownerOrganizationId: this.user.organization.id, // ✅ now safe
       archived: false,
+      // clientId: formValue.projectCategory
     };
 
     this.isLoading = true;

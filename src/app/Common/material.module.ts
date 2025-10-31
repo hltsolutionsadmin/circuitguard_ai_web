@@ -12,7 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import {MatStepperModule} from '@angular/material/stepper';
 import { MatNavList } from "@angular/material/list";
-
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
   imports: [
@@ -32,7 +32,7 @@ import { MatNavList } from "@angular/material/list";
     MatStepperModule,
     MatSidenavModule,
     MatNavList,
-    
+    MatTooltipModule
   
   ],
   declarations: [

@@ -36,12 +36,22 @@
             <option [value]="user.userIds[0]">{{ user.username }}</option>
              </div>
           </select>
-          <mat-icon class="absolute right-3 top-2.5 text-gray-500 pointer-events-none">arrow_drop_down</mat-icon>
-          <!-- <mat-error *ngIf="roleForm.get('role')?.invalid && roleForm.get('role')?.touched"
+          <!-- <mat-icon class="absolute right-3 top-2.5 text-gray-500 pointer-events-none">arrow_drop_down</mat-icon>
+          <mat-error *ngIf="roleForm.get('user')?.invalid && roleForm.get('role')?.touched"
             class="text-sm text-red-600 mt-1">
-            Role is required
+            Select Project Lead
           </mat-error> -->
         </div>
+        <div class="relative mb-4">
+           <select formControlName="priority"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white">
+             <option>Select Group Priority</option>
+            <option value="HIGH">HIGH</option>
+            <option value="MEDIUM">MEDIUM</option>
+            <option value="LOW">LOW</option>
+          </select>
+        </div>
+       
     </div>
     <div class="flex justify-end gap-2 pt-4">
       <button
@@ -54,6 +64,7 @@
       <button
         type="submit"
         [disabled]="loading"
+        [disabled]="form.invalid"
         class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
       >
         <span *ngIf="!loading">Save</span>

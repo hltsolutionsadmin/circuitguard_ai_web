@@ -5,6 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { AddTeamMember } from '../../team-setup/add-team-member/add-team-member';
 import { MatDialog } from '@angular/material/dialog';
 import { Content } from '../project-model';
+import { TeamService } from '../../services/team-service';
 
 @Component({
   selector: 'app-project-by-id',
@@ -26,6 +27,7 @@ export class ProjectById {
     private route: ActivatedRoute,
     private projectService: Project,
     private snackBar: MatSnackBar,
+    private teamservice : TeamService,
     private dialog: MatDialog,
     private router: Router,
   ) {}
@@ -53,7 +55,7 @@ export class ProjectById {
   }
 
   loadGroups(): void {
-    this.projectService.getUserGroups(this.pageNumber, this.pageSize).subscribe({
+    this.teamservice.getUserGroups(this.pageNumber, this.pageSize).subscribe({
       next: (res) => {
         this.groups = res.data.content;
         this.totalElements = res.data.totalElements;

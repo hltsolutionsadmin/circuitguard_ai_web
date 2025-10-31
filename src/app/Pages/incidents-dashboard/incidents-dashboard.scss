@@ -79,3 +79,101 @@ background-color: #FEF9C3;
 .mat-icon.analytics {
  background-color: #DCFCE7;
 }
+
+/* incidents-dashboard.scss (or a dedicated file) */
+
+.dashboard-wrapper {
+  display: flex;
+  min-height: 100vh;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.dashboard-content {
+  flex: 1;
+  transition: margin-right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease;
+}
+
+.dashboard-wrapper.panel-open .dashboard-content {
+  margin-right: 420px;
+}
+
+.detail-panel {
+  position: fixed;
+  top: 0;
+  right: -420px;
+  width: 400px;
+  height: 100%;
+  background: white;
+  // box-shadow: -8px 0 25px rgba(0, 0, 0, 0.15);
+  z-index: 50;
+  transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+}
+
+.detail-panel.open {
+  right: 0;
+}
+
+// Backdrop
+// .dashboard-wrapper::before {
+//   content: '';
+//   position: fixed;
+//   inset: 0;
+//   background: rgba(0, 0, 0, 0.25);
+//   backdrop-filter: blur(2px);
+//   z-index: 40;
+//   opacity: 0;
+//   pointer-events: none;
+//   transition: opacity 0.35s ease;
+// }
+
+.dashboard-wrapper.panel-open::before {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+// Scrollbar
+.detail-panel::-webkit-scrollbar {
+  width: 6px;
+}
+.detail-panel::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 3px;
+}
+
+/* Add a smooth transition to make the change gentle */
+.hoverCard {
+  transition: 
+    background-color 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out,
+    transform 0.2s ease-in-out; 
+}
+
+/* Define the hover state */
+.hoverCard:hover {
+  /* 1. Subtle Background Change */
+  background-color: #f7f7f7; /* A very light grey */
+  
+  /* 2. Enhanced Shadow (The "Lift" Effect) */
+  /* This shadow is often called a "deep lift" */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); 
+  
+  /* 3. Slight Scale Up (Optional but nice) */
+  transform: scale(1.01);
+}
+
+.hoverBackButton:hover {
+  /* 2. Enhanced Shadow (The "Lift" Effect) */
+  /* This shadow is often called a "deep lift" */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); 
+  
+  /* 3. Slight Scale Up (Optional but nice) */
+  transform: scale(1.01);
+}
+
+.hoverTitle:hover {
+  text-decoration: underline;
+
+}

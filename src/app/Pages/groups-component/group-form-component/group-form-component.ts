@@ -2,10 +2,10 @@ import { Component, inject, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { GroupService } from '../../services/group-service';
 import { filter, take } from 'rxjs';
 import { CommonService } from '../../../Common/services/common-service';
 import { Assignment, TeamService } from '../../services/team-service';
+import { Auth } from '../../../auth/Services/auth';
 
 @Component({
   selector: 'app-group-form-component',
@@ -16,7 +16,7 @@ import { Assignment, TeamService } from '../../services/team-service';
 export class GroupFormComponent implements OnInit {
   form: FormGroup;
   loading = false;
-  private commonService = inject(CommonService);
+  private commonService = inject(Auth);
   private userManagementService = inject(TeamService);
   user: any;
   organizationId!: number;
@@ -25,10 +25,10 @@ export class GroupFormComponent implements OnInit {
   pageSize: number = 10;
   totalElements: number = 0;
   totalPages: number = 0;
-
+  
   constructor(
     private fb: FormBuilder,
-    private projectService: GroupService,
+    private projectService: TeamService,
     private snackBar: MatSnackBar,
     private dialogRef: MatDialogRef<GroupFormComponent>,
     @Inject(MAT_DIALOG_DATA) public projectId: number
@@ -37,6 +37,7 @@ export class GroupFormComponent implements OnInit {
       groupName: ['', [Validators.required, Validators.minLength(3)]],
       description: ['', [Validators.required, Validators.minLength(5)]],
       user: [Validators.required],
+      priority: [Validators.required]
     });
   }
 
@@ -96,6 +97,7 @@ export class GroupFormComponent implements OnInit {
       description: this.form.value.description,
       project: { id: this.projectId },
       groupLead: { id: this.form.value.user },
+      priority: this.form.value.priority
     };
 
     this.projectService.createUserGroup(payload).subscribe({

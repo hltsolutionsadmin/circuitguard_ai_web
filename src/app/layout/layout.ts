@@ -1,5 +1,5 @@
-import { Component, HostListener, ViewChild } from '@angular/core';
-import { MatSidenav } from '@angular/material/sidenav';
+import { Component, HostListener, inject, Inject, ViewChild } from '@angular/core';
+import { Auth } from '../auth/Services/auth';
 
 @Component({
   selector: 'app-layout',
@@ -9,4 +9,9 @@ import { MatSidenav } from '@angular/material/sidenav';
 })
 export class Layout {
  
+  authService = inject(Auth)
+
+  logout() {
+    this.authService.logout();
+  }
 }
