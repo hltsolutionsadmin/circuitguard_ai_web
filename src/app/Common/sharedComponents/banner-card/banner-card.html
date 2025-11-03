@@ -5,7 +5,7 @@
 
   <!-- Left Section -->
   <div class="flex items-start space-x-4 mb-6 sm:mb-0">
-    <div *ngIf="config.icon" class="bg-white/20 p-3 rounded-lg">
+    <div *ngIf="config.icon" class="bg-white/20 p-3 rounded-lg" (click)="config.iconAction?.()">
       <mat-icon class="text-white text-3xl">{{ config.icon }}</mat-icon>
     </div>
 

@@ -2,11 +2,12 @@ import { Component, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { AddTeamMember } from './add-team-member/add-team-member';
 import { Assignment, AssignProjectRequest, TeamService } from '../services/team-service';
-import { CommonService } from '../../Common/services/common-service';
 import { filter, take } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Auth } from '../../auth/Services/auth';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-team-setup',
@@ -31,11 +32,13 @@ export class TeamSetup {
 
   private dialog = inject(MatDialog);
   private userManagementService = inject(TeamService);
-  private commonService = inject(CommonService);
+  private commonService = inject(Auth);
   private snackBar = inject(MatSnackBar);
   private route = inject(ActivatedRoute);
   private fb = inject(FormBuilder);
   private router = inject(Router);
+  private location = inject(Location);
+  roleFilter: string = '';
 
   constructor() {
     this.roleForm = this.fb.group({
@@ -89,6 +92,37 @@ export class TeamSetup {
     });
   }
 
+  onRoleFilterChange(event: any): void {
+  const selectedRole = event.target.value;
+  this.roleFilter = selectedRole;
+
+  if (!selectedRole) {
+    // "All Roles" selected → fetch all
+    this.fetchAssignments();
+  } else {
+    // Specific role selected → call new API
+    this.userManagementService
+      .getProjectAssignmentsByRole(this.organizationId , selectedRole, this.pageNumber, this.pageSize)
+      .subscribe({
+        next: (res) => {
+          this.users = res.data.content;
+          this.totalElements = res.data.totalElements;
+          this.totalPages = res.data.totalPages;
+        },
+        error: (error) => {
+          console.error('Error fetching project assignments by role:', error);
+          this.snackBar.open('Failed to fetch users by role.', 'Close', {
+            duration: 4000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top'
+          });
+        }
+      });
+  }
+}
+
+
+
   openAddDialog(): void {
     const dialogRef = this.dialog.open(AddTeamMember, {
       width: '400px',
@@ -109,7 +143,7 @@ export class TeamSetup {
       width: '400px',
       disableClose: true,
       panelClass: 'custom-dialog-container',
-      data: user
+      data: {user} , 
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -172,7 +206,8 @@ export class TeamSetup {
           verticalPosition: 'top'
         });
         this.selectedUsers.clear();
-        this.router.navigate(['/member-list']);
+        // this.router.navigate(['/layout/member-list']);
+        this.location.back()
       },
       error: (error) => {
         console.error('Error assigning users:', error);

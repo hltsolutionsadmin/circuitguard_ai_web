@@ -4,7 +4,7 @@ import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { Login } from './auth/Components/login/login';
 import { MaterialModule } from './Common/material.module';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Layout } from './layout/layout';
 import { BannerCard } from './Common/sharedComponents/banner-card/banner-card';
 import { provideNativeDateAdapter } from '@angular/material/core';
@@ -25,6 +25,9 @@ import { GroupFormComponent } from './Pages/groups-component/group-form-componen
 import { GroupsComponent } from './Pages/groups-component/groups-component';
 import { ClientComponent } from './Pages/client-component/client-component';
 import { GroupMembersComponent } from './Pages/groups-component/group-members-component/group-members-component';
+import { IncidentDetailPanelComponent } from './Pages/incidents-dashboard/incident-detail-panel-component/incident-detail-panel-component';
+import { SlicePipe } from '@angular/common';
+import { MatMenu } from "@angular/material/menu";
 
 export function initializeApiConfig(apiConfigService: CommonService) {
   return () => apiConfigService.loadConfig();
@@ -46,7 +49,8 @@ export function initializeApiConfig(apiConfigService: CommonService) {
     GroupMembersComponent,
     GroupFormComponent,
     GroupsComponent,
-    ClientComponent
+    ClientComponent,
+    IncidentDetailPanelComponent
   ],
   imports: [
     BrowserModule,
@@ -55,7 +59,10 @@ export function initializeApiConfig(apiConfigService: CommonService) {
     ReactiveFormsModule,
     MatNavList,
     RouterOutlet,
-    CommonModule
+    CommonModule,
+    SlicePipe,
+    FormsModule,
+    MatMenu,    
 ],
   providers: [
     provideBrowserGlobalErrorListeners(),

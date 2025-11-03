@@ -3,15 +3,18 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 export interface CreateTicketDto {
+  id?: any;
   title: string;
   description: string;
   priority: 'HIGH' | 'MEDIUM' | 'LOW';
-  status: 'OPEN';
+  status: 'OPEN' | 'NEW' | 'ASSIGNED' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED' | 'REOPENED' ;
   projectId: number;
   createdById: number;
   dueDate: string; // ISO string
   archived: boolean;
+  assignedToId?: number;
 }
+    
 
 export interface Ticket {
   id: number;
@@ -53,7 +56,7 @@ export interface GetTicketsResponse {
   providedIn: 'root'
 })
 export class TicketService {
-  private readonly apiUrl = '/api/usermanagement/tickets';
+  private readonly apiUrl = 'https://fanfun.in/api/usermanagement/tickets';
   constructor(private http: HttpClient) {}
 
   createIncident(payload: CreateTicketDto): Observable<TicketResponse> {
@@ -68,4 +71,8 @@ export class TicketService {
 
     return this.http.get<GetTicketsResponse>(this.apiUrl, { params });
   }
+
+  getTicketsByPriority(projectId: number, priority: string): Observable<any> {
+  return this.http.get<any>(`https://fanfun.in/api/usermanagement/tickets?projectId=${projectId}&priority=${priority}`);
+}
 }

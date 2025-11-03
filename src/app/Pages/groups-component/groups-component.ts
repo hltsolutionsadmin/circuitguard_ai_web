@@ -1,10 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { Project } from '../services/project';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GroupFormComponent } from './group-form-component/group-form-component';
 import { MatDialog } from '@angular/material/dialog';
 import { Content } from '../projects/project-model';
+import { TeamService } from '../services/team-service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-groups-component',
@@ -19,14 +20,16 @@ export class GroupsComponent implements OnInit {
   totalElements = 0;
   projectId: any;
   private snackBar = inject(MatSnackBar);
-  private projectService = inject(Project);
+  private projectService = inject(TeamService);
   private router = inject(Router);
   private dialog = inject(MatDialog);
   private route = inject(ActivatedRoute);
+  private Location = inject(Location)
   constructor() {
     this.projectId = this.route.snapshot.paramMap.get('id');
   }
 
+  
   ngOnInit(): void {
     this.loadGroups();
   }
@@ -67,5 +70,9 @@ export class GroupsComponent implements OnInit {
 
    showMembers(group: Content): void {
     this.router.navigate(['/layout/members-list', group.id, group.groupName, group.description,this.projectId]);
+  }
+
+    backToProj() {
+    this.Location.back();
   }
 }

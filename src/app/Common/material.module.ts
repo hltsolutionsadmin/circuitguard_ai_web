@@ -11,12 +11,16 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import {MatStepperModule} from '@angular/material/stepper';
-import { MatNavList } from "@angular/material/list";
-
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatNavList, MatListItem } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
+import { BrowserModule } from '@angular/platform-browser';
 
 @NgModule({
   imports: [
-    MatNavList
+    MatNavList,
+    MatListItem,
+    BrowserModule
   ],
   exports: [
     MatFormFieldModule,
@@ -32,8 +36,9 @@ import { MatNavList } from "@angular/material/list";
     MatStepperModule,
     MatSidenavModule,
     MatNavList,
-    
-  
+    MatTooltipModule,
+    MatListItem,
+    MatMenuModule
   ],
   declarations: [
     

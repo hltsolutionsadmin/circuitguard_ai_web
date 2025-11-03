@@ -1,0 +1,11 @@
+{
+  "baseUrls": "https://fanfun.in/api",
+  "baseUrl": "https://fanfun.in/api",
+  "endpoints": {
+    "authEndPoints"       : "/usermanagement/auth/",
+    "userEndPoints"       : "/usermanagement/user/",
+    "projectsEndPoint"    : "/usermanagement/projects",
+    "teamMemberEndPoint"  : "/usermanagement/api/assignments",
+    "createGroupEndPoint" : "/usermanagement/api"
+  }
+}

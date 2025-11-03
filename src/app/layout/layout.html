@@ -3,7 +3,7 @@
   <div class="flex-1 flex flex-col h-full overflow-hidden">
     <!-- Top Nav -->
     <header
-      class="bg-white shadow-sm z-50 flex items-center justify-between px-4 py-3 fixed top-0 left-0 right-0 lg:left-auto w-full" style="padding: 1em 5em;">
+      class="bg-white shadow-sm z-50 flex items-center justify-between px-4 py-3 fixed top-0 left-0 right-0 lg:left-auto w-full" style="padding: 1em 5em; z-index: 100;">
       <div class="flex items-center space-x-4">
         <mat-icon class="text-blue-600">business</mat-icon>
         <div class="flex flex-col">
@@ -19,13 +19,13 @@
           <a mat-icon-button>
             <mat-icon>notifications</mat-icon>
           </a>
-          <span
-            class="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold text-white bg-red-600 rounded-full">2</span>
+          <!-- <span
+            class="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold text-white bg-red-600 rounded-full">2</span> -->
         </div>
 
         <div
           class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-bold cursor-pointer">
-          A
+          <mat-icon class="flex items-center justify-center" style="font-size: 20px; display: flex;" (click)="logout()" matTooltip="Logout">logout</mat-icon>
         </div>
       </div>
     </header>

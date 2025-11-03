@@ -1,6 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
+import { CommonService } from '../../Common/services/common-service';
 
 export interface Assignment {
   id: number;
@@ -93,41 +94,82 @@ export interface ApiResponse {
   providedIn: 'root'
 })
 export class TeamService {
-  private apiUrl = '/api/usermanagement/api/assignments';
-  private readonly baseUrl = '/api/'
-  private readonly baseUrls = '/api/usermanagement/api/assignments';
+  apiConfig = inject(CommonService)
+  private apiUrl = 'https://fanfun.in/api/usermanagement/api/assignments';
+  private readonly baseUrl = 'https://fanfun.in/api/'
+  private readonly baseUrls = 'https://fanfun.in/api/usermanagement/api/assignments';
 
   constructor(private http: HttpClient) {}
 
   getAssignments(targetType: string, targetId: number, page: number, size: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/target?targetType=${targetType}&targetId=${targetId}&page=${page}&size=${size}`);
+     const teamMemDetailsUrl = this.apiConfig.getEndpoint('teamMemberEndPoint');
+    return this.http.get(`${teamMemDetailsUrl}/target?targetType=${targetType}&targetId=${targetId}&page=${page}&size=${size}&includeClientDetails=false`);
+  }
+
+  getProjectAssignmentsByRole( ORGANIZATION: number, role: string, page: number, size: number ): Observable<any> {
+    const params = new HttpParams()
+      .set('roles', role)
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    return this.http.get<any> (
+      `${this.apiUrl}/target/ORGANIZATION/${ORGANIZATION}`,
+      { params }
+    );
   }
 
   addAssignment(payload: any): Observable<any> {
-    return this.http.post(this.apiUrl, payload);
+    const teamMemDetailsUrl = this.apiConfig.getEndpoint('teamMemberEndPoint');
+    return this.http.post(teamMemDetailsUrl, payload);
+  }
+
+    addClientAssignment(payload: any): Observable<any> {
+    const url = 'https://fanfun.in/api/usermanagement/api/assignments/project/client';
+    return this.http.post(url, payload);
   }
 
   updateAssignment(id: number, payload: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}`, payload);
+    const teamMemDetailsUrl = this.apiConfig.getEndpoint('teamMemberEndPoint');
+    return this.http.put(`${teamMemDetailsUrl}/${id}`, payload);
   }
 
   deleteAssignment(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    const teamMemDetailsUrl = this.apiConfig.getEndpoint('teamMemberEndPoint');
+    return this.http.delete<void>(`${teamMemDetailsUrl}/${id}`);
   }
 
   assignToProject(request: AssignProjectRequest): Observable<void> {
-      const url = `${this.baseUrl}usermanagement/api/assignments`;
+    const teamMemDetailsUrl = this.apiConfig.getEndpoint('teamMemberEndPoint');
+      const url = `${teamMemDetailsUrl}`;
       return this.http.post<void>(url, request).pipe(
         catchError(this.handleError)
       );
     }
 
+    createUserGroup(payload: { groupName: string; description: string; project: { id: number };}): Observable<any> {
+      const groupDetailsUrl = this.apiConfig.getEndpoint('createGroupEndPoint');
+    return this.http.post(`${groupDetailsUrl}/usergroups`, payload);
+  }
+
+      getUserGroups(id: any, page: number = 0, size: number = 10): Observable<any> {
+         const groupDetailsUrl = this.apiConfig.getEndpoint('createGroupEndPoint');
+    const url = `${groupDetailsUrl}/usergroups/project/${id}?page=${page}&size=${size}`;
+    return this.http.get<any>(url);
+  } 
+
     getGroupMembers(groupId: number, page: number = 0, size: number = 10): Observable<ApiResponse> {
+      const teamMemDetailsUrl = this.apiConfig.getEndpoint('teamMemberEndPoint');
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
 
-    return this.http.get<ApiResponse>(`${this.baseUrls}/${groupId}/users`, { params });
+    return this.http.get<ApiResponse>(`${teamMemDetailsUrl}/${groupId}/users`, { params });
+  }
+
+  deleteGroupMembers(id: number): Observable<any> {
+     const teamMemDetailsUrl = this.apiConfig.getEndpoint('teamMemberEndPoint');
+     return this.http.delete(`${teamMemDetailsUrl}/${id}`);
+
   }
 
     private handleError(error: HttpErrorResponse): Observable<never> {
