@@ -14,6 +14,7 @@ export interface UserDetails {
   version: number;
   media: any[];
   password: string;
+  assignmentRoles: string[];
   registered: boolean;
   organization: any;
 }

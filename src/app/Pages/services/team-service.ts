@@ -166,6 +166,12 @@ export class TeamService {
     return this.http.get<ApiResponse>(`${teamMemDetailsUrl}/${groupId}/users`, { params });
   }
 
+  deleteGroupMembers(id: number): Observable<any> {
+     const teamMemDetailsUrl = this.apiConfig.getEndpoint('teamMemberEndPoint');
+     return this.http.delete(`${teamMemDetailsUrl}/${id}`);
+
+  }
+
     private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'An unexpected error occurred';
     if (error.error instanceof ErrorEvent) {

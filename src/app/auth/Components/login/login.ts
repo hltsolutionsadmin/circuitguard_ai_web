@@ -44,19 +44,29 @@ export class Login {
           this.userService.fetchUserDetails().subscribe({
             next: (user) => {
               const isAdmin = user.roles.some((r) => r.name === 'ROLE_BUSINESS_ADMIN');
-              if (isAdmin) {
+              const allowedRoles = [
+                'PROJECT_MANAGER',
+                'DEVELOPER',
+                'QA',
+                'DESIGNER',
+                'DEVOPS',
+                'CLIENT_ADMIN',
+              ];
+
+              const hasAllowedRole = user.assignmentRoles?.some((r) => allowedRoles.includes(r));
+
+              if (isAdmin || hasAllowedRole) {
                 this.router.navigate(['/layout']);
-              } else if (!isAdmin) {
-                this.router.navigate(['/login']);
+              } else {
                 this.snackBar.open('Access Denied!', 'Close', {
                   duration: 3000,
                   horizontalPosition: 'center',
                   verticalPosition: 'top',
                 });
                 this.authService.logout();
-                this.userService.clearUser();
+                this.authService.clearUser();
                 this.router.navigate(['/login']);
-              } 
+              }
             },
             error: (err) => {
               console.error('Failed to load user details', err);

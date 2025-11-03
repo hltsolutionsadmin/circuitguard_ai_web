@@ -27,6 +27,7 @@ import { ClientComponent } from './Pages/client-component/client-component';
 import { GroupMembersComponent } from './Pages/groups-component/group-members-component/group-members-component';
 import { IncidentDetailPanelComponent } from './Pages/incidents-dashboard/incident-detail-panel-component/incident-detail-panel-component';
 import { SlicePipe } from '@angular/common';
+import { MatMenu } from "@angular/material/menu";
 
 export function initializeApiConfig(apiConfigService: CommonService) {
   return () => apiConfigService.loadConfig();
@@ -59,8 +60,9 @@ export function initializeApiConfig(apiConfigService: CommonService) {
     MatNavList,
     RouterOutlet,
     CommonModule,
-    SlicePipe ,
-    FormsModule
+    SlicePipe,
+    FormsModule,
+    MatMenu,    
 ],
   providers: [
     provideBrowserGlobalErrorListeners(),

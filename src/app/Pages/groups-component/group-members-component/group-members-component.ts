@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TeamService, User } from '../../services/team-service';
 import { Location } from '@angular/common';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-group-members-component',
@@ -24,7 +25,8 @@ groupId: number | null = null;
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private groupService = inject(TeamService);
-  private Location = inject(Location)
+  private Location = inject(Location);
+  private snackBar = inject(MatSnackBar)
   ngOnInit(): void {
     this.groupId = Number(this.route.snapshot.paramMap.get('groupId'));
     this.groupName = this.route.snapshot.paramMap.get('groupName') ?? '';
@@ -63,8 +65,10 @@ groupId: number | null = null;
 
   removeMember(userId: number): void {
     console.log('Remove user ID:', userId);
-    // Future: call service.removeMember(this.groupId!, userId).subscribe(...)
-    // this.loadPage(this.currentPage);
+    this.groupService.deleteGroupMembers(userId).subscribe({
+      next:() => { this.showSnack('Incident created successfully!'), this.loadPage()}
+    })
+    this.loadPage(this.currentPage);
   }
 
   // Pagination helpers
@@ -76,6 +80,14 @@ groupId: number | null = null;
 
   totalPages(): number {
     return Math.ceil(this.totalElements / this.pageSize);
+  }
+
+  showSnack(message: string): void {
+    this.snackBar.open(message, 'Close', {
+      duration: 4000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+    });
   }
 
   backToProj() {
