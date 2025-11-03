@@ -1,35 +1,8 @@
-button {
-  width: 120px;
-  height: 40px;
-  border: 1px solid #d1d5db;
-  border-radius: 15px;
-  transition: all 0.3s;
-  cursor: pointer;
-  background: white;
-  font-size: 1em;
-  font-weight: 550;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: .3em;
-  mat-icon {
-    font-size: 20px;
-  }
-}
-
-button:hover {
-  background: #315cfd;
-  color: white;
-  font-size: 1.1em;
-}
-
-button.active {
-  background: #315cfd;
-  color: white;
-  font-size: 1.1em;
-  border-color: #315cfd;
-}
-
-button.active mat-icon {
-  color: white;
+.searchIcon {
+    cursor: pointer;
+    justify-content: center;
+    gap: 0.3em;
+    position: absolute;
+    right: 0;
+    padding: 0em 1em;
 }

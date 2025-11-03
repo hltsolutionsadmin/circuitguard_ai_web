@@ -1,36 +1,127 @@
-<div class="h-screen flex bg-gray-100 overflow-hidden">
-  <!-- Main Section -->
-  <div class="flex-1 flex flex-col h-full overflow-hidden">
-    <!-- Top Nav -->
-    <header
-      class="bg-white shadow-sm z-50 flex items-center justify-between px-4 py-3 fixed top-0 left-0 right-0 lg:left-auto w-full" style="padding: 1em 5em; z-index: 100;">
-      <div class="flex items-center space-x-4">
-        <mat-icon class="text-blue-600">business</mat-icon>
-        <div class="flex flex-col">
-          <span class="text-lg font-semibold text-gray-800">Circuit Guard</span>
-          <span class="text-sm text-gray-500">Service Management Platform</span>
+<div class="bg-gray-100 font-sans flex h-screen overflow-hidden">
+  <!-- Sidebar -->
+  <div
+    [class.w-64]="!isMobile || sidenavOpen"
+    [class.w-0]="isMobile && !sidenavOpen"
+    [class.absolute]="isMobile"
+    [class.left-0]="isMobile"
+    [class.h-[calc(100vh-3rem)]]="isMobile"
+    class="flex-shrink-0 bg-gray-800 shadow-2xl z-20 transition-all duration-300 ease-in-out lg:w-64 lg:static"
+    [class.transform]="isMobile"
+    [class.-translate-x-full]="isMobile && !sidenavOpen"
+    [class.translate-x-0]="isMobile && sidenavOpen"
+  >
+    <div class="flex flex-col h-full overflow-y-auto">
+      <!-- Search inside sidebar -->
+      <div
+        class="p-2 border-b border-gray-700 flex items-center bg-gray-800 flex-shrink-0"
+        style="position: relative; padding: 1rem;"
+      >
+        <div class="flex items-center space-x-2 flex-1">
+          <input
+            type="text"
+            placeholder="Search ..."
+            class="w-full bg-gray-700 text-gray-200 text-sm p-1.5 rounded-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+          />
         </div>
-         <button routerLink="/layout/team-setUp" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"><mat-icon>people</mat-icon>Members</button>
-        <button routerLink="/layout/project" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"><mat-icon>work</mat-icon>Projects</button>
+        <button class="searchIcon text-gray-400 p-1 hover:text-white">
+          <mat-icon class="text-lg">search</mat-icon>
+        </button>
       </div>
 
-      <div class="flex items-center space-x-4">
-        <div class="relative">
-          <a mat-icon-button>
-            <mat-icon>notifications</mat-icon>
-          </a>
-          <!-- <span
-            class="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold text-white bg-red-600 rounded-full">2</span> -->
+      <!-- Navigation items -->
+      <div class="flex-1 overflow-y-auto pt-0">
+      <ng-container *ngFor="let item of navItems">
+  <!-- Top-level item -->
+  <div
+    class="cursor-pointer text-sm transition-colors duration-150" style="background-color: 
+#3f5060; border-bottom: 1px solid #333;"
+    [class.bg-blue-900]="isActive(item)"
+    [class.text-white]="isActive(item)"
+    [class.text-gray-200]="!isActive(item)"
+    [class.hover:bg-gray-700]="!isActive(item)"
+    [class.border-l-4]="isActive(item)"
+    [class.border-blue-400]="isActive(item)"
+  >
+    <div
+      class="px-4 py-2 font-medium flex justify-between items-center"
+      (click)="toggleSubmenu(item)"
+      [routerLink]="item.route"
+    >
+      {{ item.label }}
+      <mat-icon *ngIf="item.children" class="text-gray-400 text-sm">
+        {{ item.active ? 'expand_less' : 'expand_more' }}
+      </mat-icon>
+    </div>
+  </div>
+
+  <!-- Submenu -->
+  <div *ngIf="item.active && item.children" class="bg-gray-900 text-gray-300">
+    <div
+      *ngFor="let sub of item.children"
+      class="hover:bg-gray-700 cursor-pointer text-sm pl-8 py-1.5 transition-colors duration-150"
+      [class.bg-gray-700]="isActive(sub)"
+      [class.text-white]="isActive(sub)"
+      [routerLink]="sub.route"
+    >
+      {{ sub.label }}
+    </div>
+  </div>
+</ng-container>
+
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content area -->
+  <div class="flex flex-col flex-1">
+    <!-- Top navbar -->
+    <nav class="bg-white p-2 flex items-center justify-between z-30 shadow-sm border-b border-gray-200 h-12 flex-shrink-0" style="background-color: var(--color-gray-800); padding: 2rem; z-index: 1000;">
+      <div class="flex items-center space-x-2">
+        <!-- Menu toggle: always visible now -->
+        <button (click)="toggleSidenav()" class="p-1 searchIcon hidden rounded hover:bg-gray-100">
+          <mat-icon class="text-gray-600">menu</mat-icon>
+        </button>
+
+        <span class="text-lg font-normal text-gray-700 hidden sm:inline" style="color: white;">Circuit Guard.ai</span>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <div class="hidden sm:block">
+          <input
+            placeholder="Search"
+            class="border border-gray-300 rounded-sm px-2 py-1.5 text-sm w-48 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            type="text"
+            style="color: white;"
+          />
         </div>
 
-        <div
-          class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-bold cursor-pointer">
-          <mat-icon class="flex items-center justify-center" style="font-size: 20px; display: flex;" (click)="logout()" matTooltip="Logout">logout</mat-icon>
+        <div class="w-px h-6 bg-gray-300"></div>
+
+        <!-- User dropdown -->
+        <div class="flex items-center space-x-2 cursor-pointer" [matMenuTriggerFor]="userMenu">
+          <span class="text-sm font-medium text-gray-800 hidden sm:block" style="color: white;">Peter Dunn</span>
+          <div
+            class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-sm"
+          >
+            PD
+          </div>
+          <mat-icon class="text-white-600 text-xl" style="color: white;" >arrow_drop_down</mat-icon>
         </div>
+
+        <!-- Material Menu -->
+        <mat-menu #userMenu="matMenu">
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            <span>Logout</span>
+          </button>
+        </mat-menu>
       </div>
-    </header>
-    <!-- Router Outlet Content -->
-    <main class="flex-1 overflow-y-auto pt-[70px] pb-6 bg-gray-50 custom-scrollbar">
+    </nav>
+
+    <!-- Main scrollable content -->
+    <main class="flex-1 overflow-y-auto h-[calc(100vh-3rem)]">
       <router-outlet></router-outlet>
     </main>
   </div>
