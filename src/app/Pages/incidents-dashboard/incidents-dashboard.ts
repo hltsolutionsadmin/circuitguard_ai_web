@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ProjectTicket } from './incident-form/project-ticket';
 import { TicketService } from '../services/ticket-service';
 import { Location } from '@angular/common';
+import { GroupService } from '../services/group-service';
 
 export interface IncidentDisplay {
   id: number;
@@ -69,12 +70,13 @@ export class IncidentsDashboard implements OnInit {
   private dialog = inject(MatDialog);
   private incidentService = inject(TicketService);
   private Location = inject(Location);
+  private layoutService = inject(GroupService); 
 
   constructor() {
     this.projectId = this.route.snapshot.paramMap.get('id');
   }
 
-  panelOpen = false;
+  detailFullPageOpen = false;
   selectedIncident: IncidentDisplay | null = null;
   projectAssignedMembers: any;
 
@@ -157,16 +159,18 @@ export class IncidentsDashboard implements OnInit {
     this.loadIncidents(); // Respects current filter
   }
 
-  openIncidentDetails(incident: IncidentDisplay): void {
+ openIncidentDetailsFullPage(incident: IncidentDisplay): void {
     this.selectedIncident = incident;
-    this.panelOpen = true;
+    this.detailFullPageOpen = true;
+    // No sidenav calls
   }
 
   closeIncidentDetails(): void {
-    this.panelOpen = false;
+    this.detailFullPageOpen = false;
     setTimeout(() => {
       this.selectedIncident = null;
-    }, 300);
+      // No sidenav calls
+    }, 100);  // Reduced timeout (no animation needed)
   }
 
   loadProject(): void {
@@ -214,18 +218,19 @@ export class IncidentsDashboard implements OnInit {
   }
 
   openCreateIncidentDialog(): void {
-    const dialogRef = this.dialog.open(ProjectTicket, {
-      width: '700px',
-      maxHeight: '90vh',
-      data: { projectId: this.project.id },
-    });
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === true) {
-        this.loadIncidents();
-        this.showSnack('Incident created successfully!');
-        this.setPriorityFilter(this.selectedPriority); // Refresh with current filter
-      }
-    });
+    // const dialogRef = this.dialog.open(ProjectTicket, {
+    //   width: '800px',
+    //   maxHeight: '90vh',
+    //   data: { projectId: this.project.id },
+    // });
+    // dialogRef.afterClosed().subscribe((result) => {
+    //   if (result === true) {
+    //     this.loadIncidents();
+    //     this.showSnack('Incident created successfully!');
+    //     this.setPriorityFilter(this.selectedPriority);
+    //     this.detailFullPageOpen = false; // Refresh with current filter
+    //   }
+    // });
   }
 
   priorityClass(priority: string): string {

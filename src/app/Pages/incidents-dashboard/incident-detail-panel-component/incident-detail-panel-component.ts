@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, input, Input, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, HostListener, inject, input, Input, Output, SimpleChanges } from '@angular/core';
 import { IncidentDisplay, ProjectMembers } from '../incidents-dashboard';
 import { catchError, of, Subject, takeUntil, tap } from 'rxjs';
 import { TeamService } from '../../services/team-service';
@@ -14,7 +14,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class IncidentDetailPanelComponent {
  @Input() incident!: IncidentDisplay;
-  @Input() MembersList:any;
+  @Input() MembersList: any;
 
   @Output() closed = new EventEmitter<void>();
 
@@ -34,6 +34,7 @@ export class IncidentDetailPanelComponent {
 
   isEditingDescription = false;
   editedDescription = '';
+  addComments = '';
   showAssigneeDropdown = false;
   showReporterDropdown = false;
 
@@ -42,6 +43,12 @@ export class IncidentDetailPanelComponent {
   hasMoreMembers = false;
 
   private destroy$ = new Subject<void>();
+
+  private oldStatus: string | null = null;
+  private oldPriority: string | null = null;
+  private oldDescription: string | null = null;
+  private oldAssignedToId: string | null = null;
+  private oldAssignedToName: string | null = null;
 
   ngOnInit(): void {}
 
@@ -56,12 +63,18 @@ export class IncidentDetailPanelComponent {
     this.destroy$.complete();
   }
 
-  close(): void {
-    this.closed.emit();
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.w-2/3.relative')) {
+      this.showAssigneeDropdown = false;
+      this.showReporterDropdown = false;
+    }
   }
 
   startEditDescription(): void {
-    this.editedDescription = this.incident.description ?? '';
+    this.oldDescription = this.incident.description ?? '';
+    this.editedDescription = this.oldDescription;
     this.isEditingDescription = true;
     setTimeout(() => {
       const el = document.querySelector('.description-textarea') as HTMLTextAreaElement;
@@ -92,17 +105,19 @@ export class IncidentDetailPanelComponent {
   }
 
   updateStatus(status: any): void {
-    debugger
-    // if (status === this.incident.status) return;
+    this.oldStatus = this.incident.status;
     this.patch({ status });
   }
 
   updatePriority(priority: any): void {
-    // if (priority === this.incident.priority) return;
+    this.oldPriority = this.incident.priority;
     this.patch({ priority });
   }
 
   updateAssignee(member: any): void {
+    this.oldAssignedToId = this.incident.assignedToId;
+    this.oldAssignedToName = this.incident.assignedToName;
+
     const newName = member.fullName;
     const newId = member.userIds?.[0] ?? null;
     // optimistic UI
@@ -111,7 +126,6 @@ export class IncidentDetailPanelComponent {
     this.showAssigneeDropdown = false;
 
     const payload: Partial<CreateTicketDto> = { id: this.incident.id };
-    // if (newName !== this.incident.assignedToName) payload.assignedToName = newName;
     payload.assignedToId = newId;
 
     this.patch(payload);
@@ -141,20 +155,16 @@ export class IncidentDetailPanelComponent {
       .subscribe();
   }
 
-  /** Revert optimistic UI on server error */
   private revert(partial: Partial<CreateTicketDto>): void {
-    if ('status' in partial) this.incident.status = this.incident.status;
-    if ('priority' in partial) this.incident.priority = this.incident.priority;
-    if ('description' in partial) this.incident.description = this.incident.description ?? '';
-    if ('assignedToId' in partial || 'assignedToName' in partial) {
-      // If you keep previous values, revert them here.
-      // For simplicity, you could reload the incident from parent if critical.
+    if ('status' in partial && this.oldStatus !== null) this.incident.status = this.oldStatus;
+    if ('priority' in partial && this.oldPriority !== null) this.incident.priority = this.oldPriority;
+    if ('description' in partial && this.oldDescription !== null) this.incident.description = this.oldDescription;
+    if ('assignedToId' in partial) {
+      this.incident.assignedToId = this.oldAssignedToId;
+      this.incident.assignedToName = this.oldAssignedToName;
     }
   }
 
-  /* --------------------------------------------------------------------- */
-  /* UTILITIES                                                             */
-  /* --------------------------------------------------------------------- */
   formatDueDate(iso: string | null): string {
     if (!iso) return 'No due date';
     const d = new Date(iso);
@@ -198,17 +208,11 @@ export class IncidentDetailPanelComponent {
     return map[status] || 'bg-gray-100 text-gray-700';
   }
 
-  onDocumentClick(event: MouseEvent): void {
-    const target = event.target as HTMLElement;
-    if (!target.closest('.w-2/3.relative')) {
-      this.showAssigneeDropdown = false;
-      this.showReporterDropdown = false;
-    }
-  }
-
-  // Pagination (optional)
   loadMoreMembers(): void {
     this.currentPageSize += 10;
-    // call your service if needed
+  }
+
+  postComments() {
+    
   }
 }

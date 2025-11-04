@@ -1,14 +1,14 @@
-<div class="h-full flex flex-col bg-white w-96 shadow-xl" style="margin-top: 5rem; height: 85%;">
+<div class="h-full flex flex-col bg-white">
   <div class="flex items-start justify-between px-5 py-4 border-b border-gray-200 sticky top-0 bg-white z-10">
-    <section class="flex">
+    <section class="flex items-center space-x-4">
       <h1 class="text-2xl font-bold text-gray-900 leading-tight">{{ incident.title }}</h1>
     </section>
 
     <div class="flex items-center space-x-2">
       <mat-icon class="text-xl text-gray-500 hover:text-gray-700 cursor-pointer">share</mat-icon>
-      <button (click)="close()" class="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100">
+      <!-- <button (click)="close()" class="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100">
         <mat-icon>close</mat-icon>
-      </button>
+      </button> -->
     </div>
   </div>
 
@@ -78,42 +78,42 @@
               <span class="font-medium truncate">{{ incident.assignedToName || 'Not Assigned' }}</span>
             </button>
 
-           <div *ngIf="showAssigneeDropdown"
-     class="absolute right-0 mt-1 w-60 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-20 max-h-60 overflow-y-auto">
-  <div class="py-1">
+            <div *ngIf="showAssigneeDropdown"
+              class="absolute mt-1 w-60 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-20 max-h-60 overflow-y-auto">
+              <div class="py-1">
 
-    <!-- ✅ If no members -->
-    <div *ngIf="!MembersList || MembersList.length === 0" class="px-4 py-2 text-sm text-gray-500 text-center">
-      No members found
-    </div>
+                <!-- If no members -->
+                <div *ngIf="!MembersList || MembersList.length === 0" class="px-4 py-2 text-sm text-gray-500 text-center">
+                  No members found
+                </div>
 
-    <!-- ✅ Loop members -->
-     <div class="w-full flex justify-end" style="padding: 0 .5em;">
-       <a (click)="toggleAssigneeDropdown($event)"><mat-icon>cancel</mat-icon></a>
-     </div>
+                <!-- Close icon for dropdown -->
+                <div class="w-full flex justify-end" style="padding: 0 .5em;">
+                  <a (click)="toggleAssigneeDropdown($event)"><mat-icon>cancel</mat-icon></a>
+                </div>
     
-    <a *ngFor="let member of MembersList"
-       (click)="updateAssignee(member)"
-       class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer space-x-3">
-      <div
-        class="w-6 h-6 rounded-full bg-gray-400 flex items-center justify-center text-xs font-bold text-white">
-        {{ getInitials(member.fullName) }}
-      </div>
-      <span>{{ member.fullName }}</span>
-    </a>
+                <a *ngFor="let member of MembersList"
+                  (click)="updateAssignee(member)"
+                  class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer space-x-3">
+                  <div
+                    class="w-6 h-6 rounded-full bg-gray-400 flex items-center justify-center text-xs font-bold text-white">
+                    {{ getInitials(member.fullName) }}
+                  </div>
+                  <span>{{ member.fullName }}</span>
+                </a>
 
-    <!-- Pagination loader (optional, same as before) -->
-    <div *ngIf="hasMoreMembers && !isLoadingMembers" class="border-t">
-      <button (click)="loadMoreMembers(); $event.stopPropagation()"
-              class="w-full text-left px-4 py-2 text-sm text-blue-600 hover:bg-blue-50">
-        See more...
-      </button>
-    </div>
-    <div *ngIf="isLoadingMembers" class="border-t p-2 text-center text-sm text-gray-500">
-      Loading more...
-    </div>
-  </div>
-</div>
+                <!-- Pagination loader -->
+                <div *ngIf="hasMoreMembers && !isLoadingMembers" class="border-t">
+                  <button (click)="loadMoreMembers(); $event.stopPropagation()"
+                    class="w-full text-left px-4 py-2 text-sm text-blue-600 hover:bg-blue-50">
+                    See more...
+                  </button>
+                </div>
+                <div *ngIf="isLoadingMembers" class="border-t p-2 text-center text-sm text-gray-500">
+                  Loading more...
+                </div>
+              </div>
+            </div>
 
           </div>
         </div>
@@ -130,20 +130,6 @@
               </div>
               <span class="font-medium truncate">{{ incident.createdByName || 'Unknown' }}</span>
             </button>
-
-            <!-- <div *ngIf="showReporterDropdown"
-                 class="absolute right-0 mt-1 w-60 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-20">
-              <div class="py-1">
-                <a *ngFor="let member of teamMembers"
-                   (click)="updateReporter(member); showReporterDropdown = false"
-                   class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer space-x-3">
-                  <div class="w-6 h-6 rounded-full bg-gray-400 flex items-center justify-center text-xs font-bold text-white">
-                    {{ member.initials }}
-                  </div>
-                  <span>{{ member.name }}</span>
-                </a>
-              </div>
-            </div> -->
           </div>
         </div>
 
@@ -170,7 +156,7 @@
 
     <section class="pt-6 border-t border-gray-200">
       <h2 class="text-sm font-semibold text-gray-700 mb-3">Comments</h2>
-      <textarea rows="3"
+      <textarea rows="3" [(ngModel)]="addComments"
         class="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm text-gray-700"
         placeholder="Add a comment...">
       </textarea>

@@ -1,12 +1,22 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GroupService {
   private baseUrl = 'https://fanfun.in/api/usermanagement/api';
+  private sidenavState = new BehaviorSubject<boolean>(true);
+  sidenavState$ = this.sidenavState.asObservable();
+
+  closeSidenav() {
+    this.sidenavState.next(false);
+  }
+
+  openSidenav() {
+    this.sidenavState.next(true);
+  }
 
   constructor(private http: HttpClient) {}
   createUserGroup(payload: { groupName: string; description: string; project: { id: number };}): Observable<any> {

@@ -1,7 +1,8 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, inject } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
 import { GroupService } from '../Pages/services/group-service';
+import { Auth } from '../auth/Services/auth';
 
 interface NavItem {
   label: string;
@@ -19,12 +20,14 @@ interface NavItem {
 })
 export class Layout {
    isSidenavOpen = true;
+   private authService = inject(Auth)
  navItems: NavItem[] = [
     { label: 'Projects', route: '/layout' },
+    { label: 'Members', route: '/layout/team-setUp' },
     {
       label: 'Incident',
       children: [
-        { label: 'Create New', route: '/incident/create' },
+        { label: 'Create New', route: '/layout/incidents-Form' },
         { label: 'Create Major Incident', route: '/incident/major' },
         { label: 'Assigned to me', route: '/incident/assigned' },
         { label: 'Open', route: '/incident/open' },
@@ -138,7 +141,6 @@ export class Layout {
   }
 
   logout() {
-    console.log('Logout clicked');
-    // your logout logic here
+    this.authService.logout();
   }
 }

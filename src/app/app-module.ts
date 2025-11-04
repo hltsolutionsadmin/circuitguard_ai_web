@@ -28,6 +28,7 @@ import { GroupMembersComponent } from './Pages/groups-component/group-members-co
 import { IncidentDetailPanelComponent } from './Pages/incidents-dashboard/incident-detail-panel-component/incident-detail-panel-component';
 import { SlicePipe } from '@angular/common';
 import { MatMenu } from "@angular/material/menu";
+import { Register } from './auth/Components/register/register';
 
 export function initializeApiConfig(apiConfigService: CommonService) {
   return () => apiConfigService.loadConfig();
@@ -50,7 +51,8 @@ export function initializeApiConfig(apiConfigService: CommonService) {
     GroupFormComponent,
     GroupsComponent,
     ClientComponent,
-    IncidentDetailPanelComponent
+    IncidentDetailPanelComponent,
+    Register
   ],
   imports: [
     BrowserModule,
