@@ -13,17 +13,19 @@ import { ProjectTicket } from './Pages/incidents-dashboard/incident-form/project
 import { GroupsComponent } from './Pages/groups-component/groups-component';
 import { ClientComponent } from './Pages/client-component/client-component';
 import { GroupMembersComponent } from './Pages/groups-component/group-members-component/group-members-component';
+import { Register } from './auth/Components/register/register';
 
 const routes: Routes = [
    { path: '', redirectTo: '/login', pathMatch: 'full' },
    { path: 'login', component: Login , canActivate: [loginGuard]},
+   { path: 'register', component: Register , canActivate: [loginGuard]},
    { path: 'layout', component: Layout,
     children: [
       { path: '', redirectTo: '/layout/project', pathMatch: 'full' },
       { path: 'project-details', component: ProjectDetailsForm },
       { path: 'project', component: Projects },
       { path: 'incidents-dashboard/:id', component: IncidentsDashboard },
-      { path: 'incidents-Form/:id', component: ProjectTicket },
+      { path: 'incidents-Form', component: ProjectTicket },
       { path: 'team-setUp', component: TeamSetup },
       { path: 'project-details/:id', component: ProjectById},
       { path: 'project-client/:id', component: ClientComponent},

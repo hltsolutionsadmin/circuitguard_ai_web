@@ -1,24 +1,13 @@
-   <!-- <app-banner-card [config]="{
-    icon: 'groups',
-    iconAction: backToProj.bind(this),
-    title: 'Teams',
-    subtitle: 'Project Gropups List',
-    buttons: [
-      { text: 'Create Group', icon: 'group', style: 'primary' ,action: openCreateGroupDialog.bind(this) },
-      { text: 'Back', icon: 'keyboard_arrow_left', style: 'primary' ,action: backToProj.bind(this) }
-    ],
-  }"></app-banner-card> -->
-
   <div
-  class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-7 text-white shadow-md bg-gradient-to-r from-blue-500 to-blue-700"
-  style="padding: 2rem 5rem;">
+  class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-7 text-white shadow-md bg-gradient-to-r from-white-500 to-white-700"
+  style="padding: 1rem 4rem;">
   <!-- Left Section -->
   <div class="space-x-4 sm:mb-0 flex items-center">
     <div class="cursor-pointer hoverBackButton" (click)="backToProj()">
-      <mat-icon mat-icon-button>keyboard_arrow_left</mat-icon>
+      <mat-icon mat-icon-button style="color: #333">keyboard_arrow_left</mat-icon>
     </div>
-    <div class=""><p class="text-2xl font-bold leading-tight">Teams</p>
-    <h1 class="text-white/90 text-sm mt-1">Projects Groups List</h1>
+    <div class=""><p class="text-2xl font-bold leading-tight" style="color: #333;">Teams</p>
+    <!-- <h1 class="text-white/90 text-sm mt-1" style="color: #333;">Projects Groups List</h1> -->
   </div>
     
   </div>
