@@ -6,7 +6,7 @@
     <div class="cursor-pointer hoverBackButton" (click)="backToProj()">
       <mat-icon mat-icon-button style="color: #333">keyboard_arrow_left</mat-icon>
     </div>
-    <div class=""><p class="text-2xl font-bold leading-tight" style="color: #333;">Teams</p>
+    <div class=""><p class="text-2xl font-bold leading-tight" style="color: #333;">Groups</p>
     <!-- <h1 class="text-white/90 text-sm mt-1" style="color: #333;">Projects Groups List</h1> -->
   </div>
     
@@ -33,13 +33,12 @@
               <tr *ngFor="let group of groups; let i = index" class="hover:bg-gray-50 transition">
                 <td class="px-4 py-3 font-mono text-gray-700">{{ i + 1 }}</td>
                 <td class="px-4 py-3 font-medium">{{ group.groupName }}</td>
-                <td class="px-4 py-3 text-gray-700">{{ group.description }}</td>
+                <td class="px-4 py-2 text-gray-700">{{ group.description }}</td>
                 <td class="px-4 py-3">
                   <button
                   (click)="showMembers(group)"
-                    class="bg-blue-600 hover:bg-blue-700 cursor-pointer text-white rounded-lg px-3 py-1.5 text-sm font-medium flex items-center space-x-1">
-                    <mat-icon class="!text-base">group</mat-icon>
-                    <span>Members List</span>
+                    class="bg-blue-600 hover:bg-blue-700 cursor-pointer text-white rounded-lg px-3 py-1.5 text-sm font-medium">
+                    <span style="display: flex; justify-content: center; align-items: center; font-size: 12px; width: 100px;"><mat-icon>group</mat-icon>View Users</span>
                   </button>
                 </td>
               </tr>

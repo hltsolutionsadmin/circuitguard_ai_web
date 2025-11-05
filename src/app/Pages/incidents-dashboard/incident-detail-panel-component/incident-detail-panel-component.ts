@@ -1,7 +1,6 @@
 import { Component, EventEmitter, HostListener, inject, input, Input, Output, SimpleChanges } from '@angular/core';
-import { IncidentDisplay, ProjectMembers } from '../incidents-dashboard';
+import { IncidentDisplay } from '../incidents-dashboard';
 import { catchError, of, Subject, takeUntil, tap } from 'rxjs';
-import { TeamService } from '../../services/team-service';
 import { CreateTicketDto, TicketService } from '../../services/ticket-service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -13,8 +12,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrl: './incident-detail-panel-component.scss'
 })
 export class IncidentDetailPanelComponent {
- @Input() incident!: IncidentDisplay;
+   @Input() incident!: IncidentDisplay;
   @Input() MembersList: any;
+
 
   @Output() closed = new EventEmitter<void>();
 
@@ -31,6 +31,21 @@ export class IncidentDetailPanelComponent {
     'REOPENED',
   ];
   priorityOptions = ['HIGH', 'MEDIUM', 'LOW'];
+
+  // --- new category/subcategory state ---
+  categoryOptions = ['Frontend', 'Backend', 'Testing'];
+  subcategoryMap: Record<string, string[]> = {
+    Frontend: ['UI Developer', 'UX', 'Accessibility', 'CSS / Styling'],
+    Backend: ['API Developer', 'Database', 'Integration'],
+    Testing: ['Automation', 'Manual', 'Performance'],
+  };
+  @Output() commentsUpdated = new EventEmitter<number>();
+  selectedCategory : any;
+  selectedSubcategory : any;
+  get currentSubcategories(): string[] {
+    return this.subcategoryMap[this.selectedCategory] ?? [];
+  }
+  // --- end new state ---
 
   isEditingDescription = false;
   editedDescription = '';
@@ -50,11 +65,26 @@ export class IncidentDetailPanelComponent {
   private oldAssignedToId: string | null = null;
   private oldAssignedToName: string | null = null;
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // if incident already has category/subcategory (optional), initialize
+    if ((this.incident as any)?.category) {
+      this.selectedCategory = (this.incident as any).category;
+      if ((this.incident as any).subcategory) {
+        this.selectedSubcategory = (this.incident as any).subcategory;
+      } else {
+        this.selectedSubcategory = this.subcategoryMap[this.selectedCategory]?.[0] ?? '';
+      }
+    }
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['incident'] && this.incident) {
       this.editedDescription = this.incident.description ?? '';
+      // optional: if incident has category/subcategory keep it in UI
+      if ((this.incident as any)?.category) {
+        this.selectedCategory = (this.incident as any).category;
+        this.selectedSubcategory = (this.incident as any).subcategory ?? this.subcategoryMap[this.selectedCategory]?.[0];
+      }
     }
   }
 
@@ -66,7 +96,7 @@ export class IncidentDetailPanelComponent {
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
-    if (!target.closest('.w-2/3.relative')) {
+    if (!target.closest('.incident-panel')) {
       this.showAssigneeDropdown = false;
       this.showReporterDropdown = false;
     }
@@ -129,6 +159,20 @@ export class IncidentDetailPanelComponent {
     payload.assignedToId = newId;
 
     this.patch(payload);
+  }
+
+  // handlers for category/subcategory changes (UI-only - static for now)
+  onCategoryChange(newCat: string) {
+    this.selectedCategory = newCat;
+    this.selectedSubcategory = this.subcategoryMap[newCat]?.[0] ?? '';
+    // optionally persist category on incident (not changing core behavior)
+    // this.patch({ category: this.selectedCategory });
+  }
+
+  onSubcategoryChange(newSub: string) {
+    this.selectedSubcategory = newSub;
+    // optionally persist subcategory on incident
+    // this.patch({ subcategory: this.selectedSubcategory });
   }
 
   private patch(partial: Partial<any>): void {
@@ -212,7 +256,19 @@ export class IncidentDetailPanelComponent {
     this.currentPageSize += 10;
   }
 
-  postComments() {
-    
+ postComments() {
+  if (this.incident.id && this.addComments?.trim()) {
+    this.ticketService.postComment(this.incident.id, this.addComments).subscribe({
+      next: () => {
+        this.snackBar.open('Comment saved successfully!', 'OK', { duration: 1500 });
+        this.addComments = ''; // clear after saving
+        this.commentsUpdated.emit(this.incident.id); // emit event to parent
+      },
+      error: (err) => {
+        this.snackBar.open('Failed to save comment', 'Close', { duration: 2000 });
+        console.error(err);
+      }
+    });
   }
+}
 }

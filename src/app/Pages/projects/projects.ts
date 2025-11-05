@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Project, ProjectModel } from '../services/project';
-import { ProjectResponse } from './project-model';
 import { filter, take } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
@@ -21,6 +20,7 @@ export class Projects implements OnInit {
   hasMore = true;
   isLoading = false;
   user: any;
+  
 
   constructor(
     private projectService: Project,
@@ -60,7 +60,7 @@ loadProjects(): void {
 
   this.projectService.getProjects(this.currentPage, this.pageSize, this.organizationId)
     .subscribe({
-      next: (response: ProjectResponse) => {
+      next: (response: any) => {
         const newProjects = response?.data?.content || [];
 
         if (this.currentPage === 0) {
@@ -96,7 +96,7 @@ onStatusChange(status: string): void {
   } else {
     this.isLoading = true;
     this.projectService.getProjectsByStatus(status,this.organizationId).subscribe({
-      next: (response: ProjectResponse) => {
+      next: (response: any) => {
         this.projects = response?.data?.content || [];
         this.totalElements = response?.data?.totalElements || 0;
         this.hasMore = false;

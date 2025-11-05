@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Content } from '../projects/project-model';
 import { TeamService } from '../services/team-service';
 import { Location } from '@angular/common';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-groups-component',
@@ -24,9 +25,17 @@ export class GroupsComponent implements OnInit {
   private router = inject(Router);
   private dialog = inject(MatDialog);
   private route = inject(ActivatedRoute);
-  private Location = inject(Location)
+  private Location = inject(Location);
+  private destroy$ = new Subject<void>();
+  
   constructor() {
-    this.projectId = this.route.snapshot.paramMap.get('id');
+     this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
+      const id = params.get('id');
+      if (id) {
+        this.projectId = id;
+        this.loadGroups();
+      }
+    });
   }
 
   

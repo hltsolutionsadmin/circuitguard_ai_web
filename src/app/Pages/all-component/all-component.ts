@@ -1,14 +1,13 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Project } from '../services/project';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Content } from '../projects/project-model';
+import { Component, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ProjectTicket } from './incident-form/project-ticket';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
+import { Content } from '../projects/project-model';
+import { GroupService } from '../services/group-service';
+import { Project } from '../services/project';
 import { TicketService } from '../services/ticket-service';
 import { Location } from '@angular/common';
-import { GroupService } from '../services/group-service';
-import { Subject, takeUntil } from 'rxjs';
 
 export interface IncidentDisplay {
   id: number;
@@ -26,7 +25,6 @@ export interface IncidentDisplay {
   completed: boolean;
   categoryName?: string;
   subCategoryName?: string;
-  comments: any;
 }
 export interface ProjectMembers {
   userIds: number[]
@@ -45,20 +43,19 @@ export interface ProjectMembers {
 type PriorityFilter = 'ALL' | 'HIGH' | 'MEDIUM' | 'LOW';
 
 @Component({
-  selector: 'app-incidents-dashboard',
+  selector: 'app-all-component',
   standalone: false,
-  templateUrl: './incidents-dashboard.html',
-  styleUrls: ['./incidents-dashboard.scss'],
+  templateUrl: './all-component.html',
+  styleUrl: './all-component.scss'
 })
-
-export class IncidentsDashboard implements OnInit {
-  project: any | null = null;
+export class AllComponent {
+project: any | null = null;
   isLoading = false;
   projectNam: string = '';
   projectDesc: string = '';
   groups: Content[] = [];
   pageNumber = 0;
-  pageSize = 10;
+  pageSize = 5;
   totalElements = 0;
   incidents: IncidentDisplay[] = [];
   incidentsLoading = false;
@@ -120,7 +117,7 @@ export class IncidentsDashboard implements OnInit {
 
   private loadAllIncidents(): void {
     this.incidentService
-      .getProjectIncidents(this.projectId, this.pageNumber, this.pageSize)
+      .getOpenProjectIncidents(this.projectId, this.pageNumber, this.pageSize, 'OPEN')
       .subscribe({
         next: (response) => {
           this.incidents = this.mapApiTicketsToDisplay(response.data.content);
@@ -176,11 +173,6 @@ export class IncidentsDashboard implements OnInit {
     this.loadIncidents(); // Respects current filter
   }
 
- openIncidentDetailsFullPage(incident: IncidentDisplay): void {
-    this.selectedIncident = incident;
-    this.detailFullPageOpen = true;
-    // No sidenav calls
-  }
 
   closeIncidentDetails(): void {
     this.detailFullPageOpen = false;
@@ -226,7 +218,6 @@ export class IncidentsDashboard implements OnInit {
         description: ticket.description || 'No description',
         priority: ticket.priority,
         status: ticket.status,
-        comments: ticket.comments,
         assignedToId: ticket.assignedToId ? `User ${ticket.assignedToId}` : 'Not Assigned',
         assignedToName: ticket.assignedToName || (ticket.assignedToId ? `User ${ticket.assignedToId}` : 'Not Assigned'),
         createdById: ticket.createdById ? `User ${ticket.createdById}` : 'Unknown',
@@ -238,53 +229,6 @@ export class IncidentsDashboard implements OnInit {
     });
   }
 
-refreshIncident(incidentId: number) {
-  if (!this.projectId) return;
-
-  this.incidentsLoading = true;
-
-  this.incidentService.getProjectIncidents(this.projectId, this.pageNumber, this.pageSize).subscribe({
-    next: (res) => {
-      // map API response
-      this.incidents = this.mapApiTicketsToDisplay(res.data.content);
-      this.totalElements = res.data.totalElements;
-      this.pageNumber = res.data.number;
-
-      // update selectedIncident reference
-      if (this.selectedIncident?.id === incidentId) {
-        const updatedIncident = this.incidents.find(i => i.id === incidentId);
-        if (updatedIncident) {
-          this.selectedIncident = updatedIncident;
-        }
-      }
-
-      this.incidentsLoading = false;
-    },
-    error: (err) => {
-      this.showSnack('Failed to refresh incidents.');
-      this.incidentsLoading = false;
-    }
-  });
-}
-
-
-
-
-  openCreateIncidentDialog(): void {
-    // const dialogRef = this.dialog.open(ProjectTicket, {
-    //   width: '800px',
-    //   maxHeight: '90vh',
-    //   data: { projectId: this.project.id },
-    // });
-    // dialogRef.afterClosed().subscribe((result) => {
-    //   if (result === true) {
-    //     this.loadIncidents();
-    //     this.showSnack('Incident created successfully!');
-    //     this.setPriorityFilter(this.selectedPriority);
-    //     this.detailFullPageOpen = false; // Refresh with current filter
-    //   }
-    // });
-  }
 
   priorityClass(priority: string): string {
     switch (priority) {
@@ -324,14 +268,6 @@ refreshIncident(incidentId: number) {
       day: 'numeric',
       year: 'numeric',
     });
-  }
-
-  openGroups() {
-    this.router.navigate([`/layout/project-groups/${this.projectId}`]);
-  }
-
-  openClient() {
-    this.router.navigate(['/layout/project-client', this.projectId]);
   }
 
   get totalPages(): number {

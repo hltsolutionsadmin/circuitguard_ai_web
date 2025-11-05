@@ -3,12 +3,13 @@ import { CreateTicketDto, TicketService } from '../../services/ticket-service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CommonService } from '../../../Common/services/common-service';
-import { filter, take } from 'rxjs';
+import { filter, Subject, take, takeUntil } from 'rxjs';
 import { Auth } from '../../../auth/Services/auth';
 import { ProjectResponse } from '../../projects/project-model';
 import { Project } from '../../services/project';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-project-ticket',
@@ -24,6 +25,7 @@ export class ProjectTicket {
   private projectService = inject(Project);
   private snackBar = inject(MatSnackBar);
   private route = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
 
   form!: FormGroup;
   submitting = false;
@@ -31,15 +33,36 @@ export class ProjectTicket {
   user: any;
   organization: any;
   projectNames: any[] = [];
+  private location = inject(Location);
+  getCategory : any;
+  getSubCategory: any;
+  private destroy$ = new Subject<void>();
+  projectId: any;
 
+  constructor() {
+  }
   ngOnInit(): void {
     this.form = this.fb.group({
       title: ['', Validators.required],
       description: ['', Validators.required],
       priority: ['LOW', Validators.required], // ← Default "LOW"
-      dueDate: ['', Validators.required],
-      projectId: ['', Validators.required]
+      dueDate: [''],
+      projectId: [ this.projectId ],
+      category: [1,Validators.required],
+      subCategory: [1, Validators.required],
+      impact: ['LOW', Validators.required],
+      urgency: ['LOW', Validators.required],
+
     });
+       this.activatedRoute.paramMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
+        const projectId = params.get('projectId');
+        if (projectId) {
+          this.form.patchValue({ projectId: +projectId });
+          this.form.get('projectId')?.disable();
+          console.log('fmerofjerofj o',projectId);
+          this.projectId = projectId
+        }
+      });
 
     this.commonService.user$.pipe(
       filter(user => !!user),
@@ -49,6 +72,8 @@ export class ProjectTicket {
         this.user = user.id;
         this.organization = user.organization.id;
         this.loadProjects();
+        this.getAllTicketCategory();
+        this.getAllTicketSubCategory();
       },
       error: () => {
         this.showError('Failed to load user. Please try again.');
@@ -83,22 +108,28 @@ export class ProjectTicket {
     this.submitting = true;
 
     const selectedProjectId = this.form.value.projectId;
-    const selectedPriority = this.form.value.priority || 'LOW'; // Fallback (though required)
+    const selectedPriority = this.projectId;
+    const formValue = this.form.getRawValue();
+     console.log(this.form.value.subCategory, this.form.value.subCategory)
 
-    const payload: CreateTicketDto = {
-      title: this.form.value.title,
-      description: this.form.value.description,
-      priority: selectedPriority, // ← Always has value (default LOW)
-      status: 'OPEN',
-      projectId: selectedProjectId,
-      createdById: this.user,
-      dueDate: this.formatDate(this.form.value.dueDate),
-      archived: false
+    const payload: any = {
+       title: formValue.title,
+  description: formValue.description,
+  status: 'OPEN',
+  projectId: formValue.projectId,
+  createdById: this.user,
+  archived: false,
+  impact: formValue.impact,
+  urgency: formValue.urgency,
+  subCategoryId: formValue.subCategory,
+  categoryId: formValue.category
+      
     };
 
     this.incidentService.createIncident(payload).subscribe({
       next: () => {
         this.snackBar.open('Incident created successfully!', 'OK', { duration: 3000 });
+        this.location.back();
         // this.dialogRef.close(true);
       },
       error: (err) => {
@@ -124,5 +155,21 @@ export class ProjectTicket {
       verticalPosition: 'top',
       panelClass: ['bg-red-500', 'text-white']
     });
+  }
+
+  getAllTicketCategory() {
+    this.incidentService.getTicketsCategory(this.organization, 0, 100 ).subscribe({
+      next:(res) => {
+         this.getCategory = res.data.content
+      }
+    })
+  }
+
+  getAllTicketSubCategory() {
+    this.incidentService.getTicketsSubCategory(1, 0, 100 ).subscribe({
+      next:(res) => {
+         this.getSubCategory = res.data.content
+      }
+    })
   }
 }

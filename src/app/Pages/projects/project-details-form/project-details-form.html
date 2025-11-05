@@ -17,8 +17,8 @@
     </div>
 
     <!-- Form -->
-    <form [formGroup]="projectDetailsForm" (ngSubmit)="onSubmit()" class="grid grid-cols-1 md:grid-cols-1 gap-x-10 gap-y-6">
-      <div class="flex flex-col gap-6">
+    <form [formGroup]="projectDetailsForm" (ngSubmit)="onSubmit()" class="">
+      <div class="flex flex-col gap-6 mb-6">
 
         <!-- Project Name -->
         <div class="flex flex-col">
@@ -60,21 +60,17 @@
           </p>
         </div>
 
-        <!-- Project Category -->
-        <!-- <div class="flex flex-col">
-          <label class="font-medium text-gray-800 mb-1">Project Client </label>
-          <select
-            formControlName="projectCategory"
-            class="border border-gray-300 rounded-lg px-4 py-2.5 text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-          >
-            <option value="">Select project Client...</option>
-            <div *ngFor="let client of clientAdmins">
-               <option [value]="client.userIds[0]">{{ client.fullName}}</option>
-            </div>
-           
-          </select>
-        </div> -->
-
+         <div class="relative">
+        <label class="text-sm font-medium text-gray-700 mb-1">Select SLA Type *</label>
+        <select
+          formControlName="sla"
+          class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white">
+          <option value="STANDARD">STANDARD</option>
+          <option value="PREMIUM">PREMIUM</option>
+          <option value="ENTERPRISE">ENTERPRISE</option>
+        </select>
+        <mat-icon class="absolute right-3 top-9 text-gray-500 pointer-events-none">arrow_drop_down</mat-icon>
+      </div>
         <!-- Dates -->
         <div class="flex w-full gap-4">
           <div class="flex flex-col" style="width: 50%;">
@@ -94,6 +90,66 @@
               class="border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-gray-700"
             />
           </div>
+        </div>
+      </div>
+      <div class="">
+        <h3 class="text-2xl font-bold text-gray-900 mb-2">Client Details</h3>
+        <div class="flex w-full gap-4 mb-4">
+           <div class="flex flex-col" style="width: 50%;">
+          <label class="font-medium text-gray-800 mb-1">Client Name *</label>
+          <input
+            type="text"
+            formControlName="clienttName"
+            placeholder="Enter your Client name"
+            class="border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-gray-700"
+          />
+          <!-- <p class="text-xs text-gray-500 mt-1">
+            Choose a clear, descriptive name for your project
+          </p> -->
+          <p
+            *ngIf="projectDetailsForm.get('projectName')?.invalid && projectDetailsForm.get('projectName')?.touched"
+            class="text-xs text-red-600 mt-1"
+          >
+            Client Name is required
+          </p>
+        </div>
+         <div class="flex flex-col" style="width: 50%;">
+          <label class="font-medium text-gray-800 mb-1">Client Email *</label>
+          <input
+            type="email"
+            formControlName="clientEmail"
+            placeholder="Enter your Client Email"
+            class="border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-gray-700"
+          />
+          <!-- <p class="text-xs text-gray-500 mt-1">
+            Choose a clear, descriptive name for your project
+          </p> -->
+          <p
+            *ngIf="projectDetailsForm.get('projectName')?.invalid && projectDetailsForm.get('projectName')?.touched"
+            class="text-xs text-red-600 mt-1"
+          >
+            Client Email is required
+          </p>
+        </div>
+        </div>
+       
+         <div class="flex flex-col">
+          <label class="font-medium text-gray-800 mb-1">Client Password *</label>
+          <input
+            type="password"
+            formControlName="clientPassword"
+            placeholder="Enter password"
+            class="border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-gray-700"
+          />
+          <!-- <p class="text-xs text-gray-500 mt-1">
+            Choose a clear, descriptive name for your project
+          </p> -->
+          <p
+            *ngIf="projectDetailsForm.get('projectName')?.invalid && projectDetailsForm.get('projectName')?.touched"
+            class="text-xs text-red-600 mt-1"
+          >
+            Client Password is required
+          </p>
         </div>
       </div>
 

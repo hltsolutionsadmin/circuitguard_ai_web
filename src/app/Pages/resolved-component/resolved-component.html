@@ -1,17 +1,13 @@
 <div class="dashboard-wrapper">
   <!-- Dashboard List View -->
-  <div class="dashboard-content" *ngIf="!detailFullPageOpen">
-    <div class="flex justify-start items-center gap-4" style="padding: 1rem 4rem;">
-       <h1 class="text-3xl">Incidents</h1>
-      <!-- <button (click)="openCreateIncidentDialog()" class="button-name" role="button"><mat-icon>add</mat-icon>Create Incident</button> -->
-    </div>
+  <div class="dashboard-content">
     <div class="space-y-6 bg-gray-50 min-h-screen" style="padding: 2em 5em;">
       <!-- Top Stat Cards -->
 
       <!-- Section Title & Filters -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between">
         <div>
-          <h2 class="text-xl font-semibold text-gray-800">Incidents</h2>
+          <h2 class="text-xl font-semibold text-gray-800">Resolved Tickets</h2>
           <p class="text-sm text-gray-500">Critical and high priority incidents requiring immediate attention</p>
         </div>
 
@@ -58,14 +54,14 @@
             <tr *ngFor="let incident of incidents; let i = index" class="hover:bg-gray-50">
               <td class="px-4 py-3"><input type="checkbox" /></td>
               <td class="px-4 py-3 font-mono text-gray-700">{{ i + 1 }}</td>
-              <td class="px-4 py-3 font-medium text-gray-800 cursor-pointer hoverTitle" (click)="openIncidentDetailsFullPage(incident)">
+              <td class="px-4 py-3 font-medium text-gray-800 cursor-pointer hoverTitle">
                 <a>{{ incident.title }}</a>
               </td>
               <td class="px-4 py-3">
                 <span [ngClass]="priorityClass(incident.priority)" class="px-2 py-1 text-xs font-medium rounded-full">{{ incident.priority }}</span>
               </td>
               <td class="px-4 py-3">
-                <span [ngClass]="statusClass(incident.status)" class="px-2 py-1 text-xs font-medium rounded-full">{{ incident.status }}</span>
+                <span [ngClass]="statusClass(incident.status)" class="px-2 py-1 text-xs font-medium rounded-full">Resolved</span>
               </td>
               <td class="px-4 py-3"><span class="text-sm text-gray-600">{{ incident.subCategoryName || 'NO Group'}}</span></td>
               <td class="px-4 py-3 text-gray-600">{{ incident.createdByName }}</td>
@@ -96,30 +92,6 @@
           </div>
         </div>
       </div>
-    </div>
-  </div>
-
-  <!-- Full-Page Detail View -->
-  <div *ngIf="detailFullPageOpen" class="w-full inset-0 bg-white z-50 overflow-y-auto">
-    <div class="min-h-screen flex flex-col">
-      <!-- Sticky Header -->
-      <div class="sticky top-0 bg-white border-b border-gray-200 shadow-sm p-4 flex justify-between items-center z-10">
-        <button (click)="closeIncidentDetails()" class="flex items-center space-x-2 text-gray-600 hover:text-gray-800">
-          <mat-icon class="cursor-pointer">arrow_back</mat-icon>
-          <span class="text-lg font-medium">Back to Incidents</span>
-        </button>
-        <button (click)="closeIncidentDetails()" class="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100">
-          <!-- <mat-icon>close</mat-icon> -->
-        </button>
-      </div>
-
-      <!-- Detail Component (full width/height) -->
-      <app-incident-detail-panel-component
-        [incident]="selectedIncident!"
-        [MembersList]="projectAssignedMembers!"
-        (commentsUpdated)="refreshIncident($event)"
-        (closed)="closeIncidentDetails()">
-      </app-incident-detail-panel-component>
     </div>
   </div>
 </div>

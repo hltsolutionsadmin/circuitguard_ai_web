@@ -50,6 +50,10 @@ export class ProjectDetailsForm {
       // projectCategory: [''],
       startDate: [null, Validators.required],
       targetEndDate: [null, Validators.required],
+      clientEmail: [''],
+      clienttName: [''],
+      clientPassword: [''],
+      sla: ['STANDARD', Validators.required]
     });
 
     // Wait for valid user data before enabling submission
@@ -143,6 +147,7 @@ export class ProjectDetailsForm {
     }
 
     const formValue = this.projectDetailsForm.value;
+    console.log(formValue.sla)
 
     const project: ProjectModel = {
       name: formValue.projectName,
@@ -153,6 +158,10 @@ export class ProjectDetailsForm {
       type: 'INTERNAL',
       ownerOrganizationId: this.user.organization.id, // ✅ now safe
       archived: false,
+      clientEmail: formValue.clientEmail,
+      cleintPassword: formValue.clientPassword,
+      cleintFullName: formValue.clienttName,
+      slaTier : formValue.sla
       // clientId: formValue.projectCategory
     };
 

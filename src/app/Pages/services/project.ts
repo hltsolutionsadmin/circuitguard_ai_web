@@ -15,6 +15,10 @@ export interface ProjectModel {
   ownerOrganizationId: number | undefined;
   archived: boolean;
   clientId?: number;
+  clientEmail?: string;
+  cleintFullName?: string;
+  cleintPassword?: string;
+  slaTier : string; 
 }
 
 @Injectable({

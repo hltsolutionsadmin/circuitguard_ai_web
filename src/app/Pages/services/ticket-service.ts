@@ -10,7 +10,7 @@ export interface CreateTicketDto {
   status: 'OPEN' | 'NEW' | 'ASSIGNED' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED' | 'REOPENED' ;
   projectId: number;
   createdById: number;
-  dueDate: string; // ISO string
+  dueDate?: string; // ISO string
   archived: boolean;
   assignedToId?: number;
 }
@@ -67,12 +67,37 @@ export class TicketService {
     const params = new HttpParams()
       .set('projectId', projectId.toString())
       .set('page', page.toString())
-      .set('size', size.toString());
+      .set('size', size.toString())
+
+    return this.http.get<GetTicketsResponse>(this.apiUrl, { params });
+  }
+
+    getOpenProjectIncidents(projectId: number, page: number = 0, size: number = 10, status?: any): Observable<GetTicketsResponse> {
+    const params = new HttpParams()
+      .set('projectId', projectId.toString())
+      .set('page', page.toString())
+      .set('size', size.toString())
+      .set('status',status)
 
     return this.http.get<GetTicketsResponse>(this.apiUrl, { params });
   }
 
   getTicketsByPriority(projectId: number, priority: string): Observable<any> {
   return this.http.get<any>(`https://fanfun.in/api/usermanagement/tickets?projectId=${projectId}&priority=${priority}`);
+}
+
+getTicketsCategory(organizationId: number, page: number = 0, size: number = 10 ): Observable<any> {
+  return this.http.get<any>(`https://fanfun.in/api/usermanagement/api/categories/org/${organizationId}?page=${page}&size=${size}`);
+}
+
+getTicketsSubCategory(categoryId: number, page: number = 0, size: number = 10 ): Observable<any> {
+  return this.http.get<any>(`https://fanfun.in/api/usermanagement/api/subcategories/category/${categoryId}?page=${page}&size=${size}`);
+}
+
+postComment(ticketId: number, comment: string): Observable<any> {
+  return this.http.post<any>(
+    `https://fanfun.in/api/usermanagement/tickets/${ticketId}/comments`,
+    { comment }  // backend expects this shape
+  );
 }
 }

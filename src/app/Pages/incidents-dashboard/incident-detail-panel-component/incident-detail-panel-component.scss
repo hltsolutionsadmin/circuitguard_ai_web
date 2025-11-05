@@ -8,3 +8,11 @@ mat-icon {
   height: 18px;
   line-height: 18px;
 }
+.description-textarea {
+  min-height: 96px;
+}
+
+/* small helper so selects don't look too tight inside the right panel */
+aside select {
+  min-width: 6rem;
+}
