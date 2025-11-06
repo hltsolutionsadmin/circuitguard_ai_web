@@ -1,11 +1,14 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Project } from '../services/project';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { Component, inject } from '@angular/core';
 import { Content } from '../projects/project-model';
-import { TicketService } from '../services/ticket-service';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
-import { Auth } from '../../auth/Services/auth';
+import { GroupService } from '../services/group-service';
+import { Project } from '../services/project';
+import { TicketService } from '../services/ticket-service';
+import { Location } from '@angular/common';
+
 
 export interface IncidentDisplay {
   id: number;
@@ -23,7 +26,6 @@ export interface IncidentDisplay {
   completed: boolean;
   categoryName?: string;
   subCategoryName?: string;
-  comments: any;
 }
 export interface ProjectMembers {
   userIds: number[]
@@ -42,26 +44,26 @@ export interface ProjectMembers {
 type PriorityFilter = 'ALL' | 'HIGH' | 'MEDIUM' | 'LOW';
 
 @Component({
-  selector: 'app-incidents-dashboard',
+  selector: 'app-assigned-to-me-component',
   standalone: false,
-  templateUrl: './incidents-dashboard.html',
-  styleUrls: ['./incidents-dashboard.scss'],
+  templateUrl: './assigned-to-me-component.html',
+  styleUrl: './assigned-to-me-component.scss'
 })
-
-export class IncidentsDashboard implements OnInit {
+export class AssignedToMeComponent {
   project: any | null = null;
   isLoading = false;
   projectNam: string = '';
   projectDesc: string = '';
   groups: Content[] = [];
   pageNumber = 0;
-  pageSize = 10;
+  pageSize = 5;
   totalElements = 0;
   incidents: IncidentDisplay[] = [];
   incidentsLoading = false;
   incidentsError: string | null = null;
   projectId: any;
 
+  // Filter state
   selectedPriority: PriorityFilter = 'ALL';
   private destroy$ = new Subject<void>();
 
@@ -69,8 +71,10 @@ export class IncidentsDashboard implements OnInit {
   private router = inject(Router);
   private projectService = inject(Project);
   private snackBar = inject(MatSnackBar);
+  private dialog = inject(MatDialog);
   private incidentService = inject(TicketService);
-  authService = inject(Auth)
+  private Location = inject(Location);
+  private layoutService = inject(GroupService); 
 
   constructor() {
      this.route.paramMap
@@ -96,6 +100,7 @@ export class IncidentsDashboard implements OnInit {
     this.loadIncidents(); // Defaults to ALL
   }
 
+  // Unified load method based on filter
   loadIncidents(priority?: PriorityFilter): void {
     if (!this.projectId) return;
 
@@ -106,14 +111,13 @@ export class IncidentsDashboard implements OnInit {
 
     if (targetPriority === 'ALL') {
       this.loadAllIncidents();
-    } else if (!this.authService.devloper) {
+    } else {
       this.loadFilteredIncidents(targetPriority);
     }
   }
 
   private loadAllIncidents(): void {
-    if(this.authService.isBusinessAdmin || this.authService.isClientAdmin) {
-       this.incidentService
+    this.incidentService
       .getProjectIncidents(this.projectId, this.pageNumber, this.pageSize)
       .subscribe({
         next: (response) => {
@@ -123,24 +127,9 @@ export class IncidentsDashboard implements OnInit {
           this.incidentsLoading = false;
         },
         error: (error) => {
-          this.incidentsLoading = false;
           this.handleLoadError('Failed to load incidents. Please try again.');
         },
       });
-    } else if (this.authService.devloper) {
-      this.incidentService.getUserIncidents(this.projectId).subscribe({
-        next: (response) => {
-          this.incidents = this.mapApiTicketsToDisplay(response.data.content);
-          this.totalElements = response.data.totalElements;
-          this.pageNumber = response.data.number;
-          this.incidentsLoading = false;
-        },
-        error: (error) => {
-          this.incidentsLoading = false;
-          this.handleLoadError('Failed to load incidents. Please try again.');
-        }
-      });
-    }
   }
 
   private loadFilteredIncidents(priority: Exclude<PriorityFilter, 'ALL'>): void {
@@ -185,11 +174,6 @@ export class IncidentsDashboard implements OnInit {
     this.loadIncidents(); // Respects current filter
   }
 
- openIncidentDetailsFullPage(incident: IncidentDisplay): void {
-    this.selectedIncident = incident;
-    this.detailFullPageOpen = true;
-    // No sidenav calls
-  }
 
   closeIncidentDetails(): void {
     this.detailFullPageOpen = false;
@@ -235,7 +219,6 @@ export class IncidentsDashboard implements OnInit {
         description: ticket.description || 'No description',
         priority: ticket.priority,
         status: ticket.status,
-        comments: ticket.comments,
         assignedToId: ticket.assignedToId ? `User ${ticket.assignedToId}` : 'Not Assigned',
         assignedToName: ticket.assignedToName || (ticket.assignedToId ? `User ${ticket.assignedToId}` : 'Not Assigned'),
         createdById: ticket.createdById ? `User ${ticket.createdById}` : 'Unknown',
@@ -247,34 +230,6 @@ export class IncidentsDashboard implements OnInit {
     });
   }
 
-refreshIncident(incidentId: number) {
-  if (!this.projectId) return;
-
-  this.incidentsLoading = true;
-
-  this.incidentService.getProjectIncidents(this.projectId, this.pageNumber, this.pageSize).subscribe({
-    next: (res) => {
-      // map API response
-      this.incidents = this.mapApiTicketsToDisplay(res.data.content);
-      this.totalElements = res.data.totalElements;
-      this.pageNumber = res.data.number;
-
-      // update selectedIncident reference
-      if (this.selectedIncident?.id === incidentId) {
-        const updatedIncident = this.incidents.find(i => i.id === incidentId);
-        if (updatedIncident) {
-          this.selectedIncident = updatedIncident;
-        }
-      }
-
-      this.incidentsLoading = false;
-    },
-    error: (err) => {
-      this.showSnack('Failed to refresh incidents.');
-      this.incidentsLoading = false;
-    }
-  });
-}
 
   priorityClass(priority: string): string {
     switch (priority) {
@@ -314,14 +269,6 @@ refreshIncident(incidentId: number) {
       day: 'numeric',
       year: 'numeric',
     });
-  }
-
-  openGroups() {
-    this.router.navigate([`/layout/project-groups/${this.projectId}`]);
-  }
-
-  openClient() {
-    this.router.navigate(['/layout/project-client', this.projectId]);
   }
 
   get totalPages(): number {

@@ -14,6 +14,9 @@ import { GroupsComponent } from './Pages/groups-component/groups-component';
 import { ClientComponent } from './Pages/client-component/client-component';
 import { GroupMembersComponent } from './Pages/groups-component/group-members-component/group-members-component';
 import { Register } from './auth/Components/register/register';
+import { AssignedToMeComponent } from './Pages/assigned-to-me-component/assigned-to-me-component';
+import { ResolvedComponent } from './Pages/resolved-component/resolved-component';
+import { AllComponent } from './Pages/all-component/all-component';
 
 const routes: Routes = [
    { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -25,7 +28,10 @@ const routes: Routes = [
       { path: 'project-details', component: ProjectDetailsForm },
       { path: 'project', component: Projects },
       { path: 'incidents-dashboard/:id', component: IncidentsDashboard },
-      { path: 'incidents-Form', component: ProjectTicket },
+      { path: 'assigned-to-me/:id', component: AssignedToMeComponent },
+      { path: 'resolved/:id', component: ResolvedComponent },
+      { path: 'all/:id', component: AllComponent },
+      { path: 'incidents-Form/:projectId', component: ProjectTicket },
       { path: 'team-setUp', component: TeamSetup },
       { path: 'project-details/:id', component: ProjectById},
       { path: 'project-client/:id', component: ClientComponent},

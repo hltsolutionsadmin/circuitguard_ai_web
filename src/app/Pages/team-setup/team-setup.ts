@@ -210,13 +210,26 @@ export class TeamSetup {
         this.location.back()
       },
       error: (error) => {
-        console.error('Error assigning users:', error);
-        this.snackBar.open('Failed to assign users.', 'Close', {
-          duration: 4000,
-          horizontalPosition: 'center',
-          verticalPosition: 'top'
-        });
-      }
+  console.error('Error assigning users:', error);
+
+  // Safely check for backend error structure
+  const backendError = error?.error;
+
+  if (backendError?.errorCode === 1005 || error.status === 409) {
+    this.snackBar.open('One of the users is already in this group.', 'Close', {
+      duration: 4000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top'
+    });
+  } else {
+    this.snackBar.open('One of the users is already in this group.', 'Close', {
+      duration: 4000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top'
+    });
+  }
+}
+
     });
   }
 

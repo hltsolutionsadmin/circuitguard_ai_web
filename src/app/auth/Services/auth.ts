@@ -35,7 +35,6 @@ interface LoginResponse {
 export class Auth {
   apiConfig = inject(CommonService)
   router = inject(Router)
-  private apiUrl = 'https://fanfun.in/api/usermanagement/auth';
 
   constructor(private http: HttpClient) {}
 
@@ -93,6 +92,9 @@ export class Auth {
   
   private userSubject = new BehaviorSubject<UserDetails | null>(null);
   user$ = this.userSubject.asObservable();
+   isBusinessAdmin = false;
+  isClientAdmin = false;
+  devloper = false;
 
 
   fetchUserDetails(): Observable<UserDetails> {
@@ -100,8 +102,29 @@ export class Auth {
     return this.http.get<UserDetails>(`${userDetailsUrl}userDetails`).pipe(
       tap((user) => {
         this.userSubject.next(user);
+        this.initializeRoleFlags(user);
       })
     );
+  }
+
+   private initializeRoleFlags(user: UserDetails): void {
+    this.isBusinessAdmin = false;
+    this.isClientAdmin = false;
+    this.devloper = false;
+
+    const roles = user.roles?.map(r => r.name) || [];
+    const assignmentRoles = user.assignmentRoles || [];
+
+    if (roles.includes('ROLE_BUSINESS_ADMIN')) {
+      this.isBusinessAdmin = true;
+    }
+
+    if (assignmentRoles.includes('CLIENT_ADMIN')) {
+      this.isClientAdmin = true;
+    }
+    if(assignmentRoles.includes('DEVELOPER') || assignmentRoles.includes('QA') || assignmentRoles.includes('DESIGNER') || assignmentRoles.includes('DEVOPS')) {
+      this.devloper = true;
+    }
   }
 
   getUser(): UserDetails | null {
@@ -115,6 +138,8 @@ export class Auth {
 
   clearUser() {
     this.userSubject.next(null);
+    this.isBusinessAdmin = false;
+    this.isClientAdmin = false;
   }
   
 

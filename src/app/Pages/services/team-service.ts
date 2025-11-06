@@ -1,16 +1,16 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
 import { CommonService } from '../../Common/services/common-service';
 
 export interface Assignment {
   id: number;
-  userId: number | null; // Updated to allow null
-  userIds: number[]; // Added to match API response
+  userId: number | null; 
+  userIds: number[]; 
   targetType: string;
   targetId: number;
   roles: string[] | null; 
-  groupIds: number[] | null; // Added for completeness
+  groupIds: number[] | null;
   active: boolean;
   username: string | null;
   fullName: string | null;
@@ -95,10 +95,6 @@ export interface ApiResponse {
 })
 export class TeamService {
   apiConfig = inject(CommonService)
-  private apiUrl = 'https://fanfun.in/api/usermanagement/api/assignments';
-  private readonly baseUrl = 'https://fanfun.in/api/'
-  private readonly baseUrls = 'https://fanfun.in/api/usermanagement/api/assignments';
-
   constructor(private http: HttpClient) {}
 
   getAssignments(targetType: string, targetId: number, page: number, size: number): Observable<any> {
@@ -107,13 +103,14 @@ export class TeamService {
   }
 
   getProjectAssignmentsByRole( ORGANIZATION: number, role: string, page: number, size: number ): Observable<any> {
+    const teamMemDetailsUrl = this.apiConfig.getEndpoint('teamMemberEndPoint');
     const params = new HttpParams()
       .set('roles', role)
       .set('page', page.toString())
       .set('size', size.toString());
 
     return this.http.get<any> (
-      `${this.apiUrl}/target/ORGANIZATION/${ORGANIZATION}`,
+      `${teamMemDetailsUrl}/target/ORGANIZATION/${ORGANIZATION}`,
       { params }
     );
   }
@@ -124,8 +121,8 @@ export class TeamService {
   }
 
     addClientAssignment(payload: any): Observable<any> {
-    const url = 'https://fanfun.in/api/usermanagement/api/assignments/project/client';
-    return this.http.post(url, payload);
+      const teamMemDetailsUrl = this.apiConfig.getEndpoint('teamMemberEndPoint');
+    return this.http.post(`${teamMemDetailsUrl}/project/client`, payload);
   }
 
   updateAssignment(id: number, payload: any): Observable<any> {
@@ -169,16 +166,13 @@ export class TeamService {
   deleteGroupMembers(id: number): Observable<any> {
      const teamMemDetailsUrl = this.apiConfig.getEndpoint('teamMemberEndPoint');
      return this.http.delete(`${teamMemDetailsUrl}/${id}`);
-
   }
 
     private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'An unexpected error occurred';
     if (error.error instanceof ErrorEvent) {
-      // Client-side error
       errorMessage = `Error: ${error.error.message}`;
     } else {
-      // Server-side error
       errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
     }
     console.error(errorMessage);

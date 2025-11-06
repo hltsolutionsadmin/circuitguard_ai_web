@@ -49,31 +49,5 @@ export class CommonService {
     }
     return `${this.config.baseUrl}${relativePath}`;
   }
-
-   private userDetailsUrl = 'https://fanfun.in/api/usermanagement/user/userDetails';
-  private userSubject = new BehaviorSubject<UserDetails | null>(null);
-  user$ = this.userSubject.asObservable();
-
-
-  fetchUserDetails(): Observable<UserDetails> {
-    return this.http.get<UserDetails>(this.userDetailsUrl).pipe(
-      tap((user) => {
-        this.userSubject.next(user);
-      })
-    );
-  }
-
-  getUser(): UserDetails | null {
-    return this.userSubject.value;
-  }
-
-  hasRole(roleName: string): boolean {
-    const user = this.userSubject.value;
-    return !!user?.roles.some((r) => r.name === roleName);
-  }
-
-  clearUser() {
-    this.userSubject.next(null);
-  }
   
 }

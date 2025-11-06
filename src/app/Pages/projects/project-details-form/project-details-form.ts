@@ -10,6 +10,7 @@ import { Project, ProjectModel } from '../../services/project';
 import { CommonService } from '../../../Common/services/common-service';
 import { Auth } from '../../../auth/Services/auth';
 import { Assignment, TeamService } from '../../services/team-service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-project-details-form',
@@ -33,6 +34,7 @@ export class ProjectDetailsForm {
 
   projectDetailsForm!: FormGroup;
   private userManagementService = inject(TeamService);
+  private location = inject(Location)
 
   constructor(
     private fb: FormBuilder,
@@ -50,6 +52,10 @@ export class ProjectDetailsForm {
       // projectCategory: [''],
       startDate: [null, Validators.required],
       targetEndDate: [null, Validators.required],
+      clientEmail: [''],
+      clienttName: [''],
+      clientPassword: [''],
+      sla: ['STANDARD', Validators.required]
     });
 
     // Wait for valid user data before enabling submission
@@ -143,6 +149,7 @@ export class ProjectDetailsForm {
     }
 
     const formValue = this.projectDetailsForm.value;
+    console.log(formValue.sla)
 
     const project: ProjectModel = {
       name: formValue.projectName,
@@ -153,6 +160,10 @@ export class ProjectDetailsForm {
       type: 'INTERNAL',
       ownerOrganizationId: this.user.organization.id, // ✅ now safe
       archived: false,
+      clientEmail: formValue.clientEmail,
+      cleintPassword: formValue.clientPassword,
+      cleintFullName: formValue.clienttName,
+      slaTier : formValue.sla
       // clientId: formValue.projectCategory
     };
 
@@ -162,6 +173,7 @@ export class ProjectDetailsForm {
       next: (res: any) => {
         if(res) {
           const responseId = res.data.id
+          window.location.reload();
           this.route.navigate([`/layout/incidents-dashboard/${responseId}`])
            this.isLoading = false;
         this.snackBar.open('Project created successfully!', 'Close', {

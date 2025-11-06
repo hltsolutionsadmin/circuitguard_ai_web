@@ -77,8 +77,6 @@ export class Login {
         } else {
           this.router.navigate(['/login']);
         }
-        localStorage.setItem('refreshToken', response.refreshToken);
-        this.router.navigate(['/layout/project']);
       },
       error: (error: any) => {
         this.isLoading = false;

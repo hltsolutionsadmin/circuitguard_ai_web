@@ -1,9 +1,9 @@
 <!-- team-setup.html -->
-<div class="bg-gray-50 min-h-screen" style="padding: 1em 5em;">
+<div class="bg-gray-50 min-h-screen" style="padding: 0em 3em;">
   <!-- Filters -->
   <div class="mt-4 bg-white p-4 rounded-md shadow-sm">
     <div class="flex flex-wrap justify-between items-center gap-4">
-      <h4 class="text-lg">{{ groupId ? 'Assign Group Members' : 'Members List' }}</h4>
+      <h4 class="text-lg">{{ groupId ? 'Assign Group Members' : 'Users List' }}</h4>
       <div class="flex flex-wrap items-center gap-4">
         <div>
           <label class="text-sm font-medium text-gray-600">Status:</label>
@@ -25,9 +25,9 @@
           </select>
         </div>
         <div class="flex items-center space-x-2">
-          <button *ngIf="!groupId" (click)="openAddDialog()"
-            class="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md">
-            <mat-icon class="mr-1 text-base">add</mat-icon> Add Team
+          <button *ngIf="!groupId" style="" (click)="openAddDialog()"
+            class="flex items-center bg-blue-600 hover:bg-blue-700 text-white rounded-md" style="font-size: 12px; padding: .5em;">
+            <mat-icon class="mr-1 text-base justify-center items-center" style="font-size: 15px; display: flex;">add</mat-icon> Add Team
           </button>
           <button *ngIf="groupId"
             class="flex cursor-pointer items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md"
@@ -43,6 +43,7 @@
         <thead class="bg-gray-100 text-xs font-semibold uppercase text-gray-500">
           <tr>
             <th class="px-4 py-3">User</th>
+            <th class="px-4 py-3">Email</th>
             <th class="px-4 py-3">Role</th>
             <!-- <th class="px-4 py-3">Primary Contact</th> -->
             <th class="px-4 py-3">Status</th>
@@ -51,17 +52,27 @@
         </thead>
         <tbody>
           <tr *ngFor="let user of users" class="border-t hover:bg-gray-50">
-            <td class="px-4 py-3 flex items-center space-x-3">
-              <div
+            <td class="px-4 py-1">
+              <!-- <div
                 class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-medium">
                 {{ getInitials(user.fullName) }}
-              </div>
+              </div> -->
               <div>
                 <div class="font-medium text-gray-800">{{ user.fullName || 'N/A' }}</div>
+                <!-- <div class="text-gray-500 text-xs">{{ user.username || 'N/A' }}</div> -->
+              </div>
+            </td>
+            <td>
+               <!-- <div
+                class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-medium">
+                {{ getInitials(user.fullName) }}
+              </div> -->
+              <div>
+                <!-- <div class="font-medium text-gray-800">{{ user.fullName || 'N/A' }}</div> -->
                 <div class="text-gray-500 text-xs">{{ user.username || 'N/A' }}</div>
               </div>
             </td>
-            <td class="px-4 py-3">
+            <td class="px-4 py-1">
               <span *ngIf="user.roles && user.roles.length > 0; else noRole"
                 class="px-2 py-1 rounded-full text-xs font-medium" [ngClass]="getRoleColor(user.roles[0])">
                 {{ getDisplayRole(user.roles[0]) }}
@@ -71,7 +82,7 @@
               </ng-template>
             </td>
             <!-- <td class="px-4 py-3">{{ user.primaryContact || 'N/A' }}</td> -->
-            <td class="px-4 py-3">
+            <td class="px-4 py-1">
               <span class="px-2 py-1 rounded-full text-xs font-medium" [ngClass]="{
                       'bg-green-100 text-green-700': user.active,
                       'bg-red-100 text-red-700': !user.active
@@ -79,7 +90,7 @@
                 {{ user.active ? 'Active' : 'Inactive' }}
               </span>
             </td>
-            <td class="px-4 py-3 flex items-center space-x-2">
+            <td class="px-4 py-1 flex items-center space-x-2">
               <ng-container *ngIf="!groupId">
                 <!-- <button mat-icon-button (click)="openEditDialog(user)" aria-label="Edit user">
                   <mat-icon class="text-gray-500 text-base">edit</mat-icon>

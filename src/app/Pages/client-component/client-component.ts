@@ -5,6 +5,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { GroupService } from '../services/group-service';
 import { Location } from '@angular/common';
+import { Subject, takeUntil } from 'rxjs';
+import { Auth } from '../../auth/Services/auth';
 
 @Component({
   selector: 'app-client-component',
@@ -18,16 +20,27 @@ export class ClientComponent implements OnInit{
    private snackBar = inject(MatSnackBar);
    private paramRoute = inject(ActivatedRoute);
    private groupService = inject(GroupService);
-   private Location = inject(Location)
+   private Location = inject(Location);
+   private destroy$ = new Subject<void>();
+    authService = inject(Auth)
+   
    projectId : any;
    clients: any;
    constructor() {
-    this.projectId = this.paramRoute.snapshot.paramMap.get('id')
+    this.paramRoute.paramMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
+      const id = params.get('id');
+      if (id) {
+        this.projectId = id;
+        this.getProjectClients();
+      }
+    });
    }
    
    ngOnInit(): void {
      this.getProjectClients();
    }
+
+   
 
    getProjectClients() {
     this.groupService.getClientMembers(this.projectId).subscribe({

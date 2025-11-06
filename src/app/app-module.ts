@@ -29,6 +29,9 @@ import { IncidentDetailPanelComponent } from './Pages/incidents-dashboard/incide
 import { SlicePipe } from '@angular/common';
 import { MatMenu } from "@angular/material/menu";
 import { Register } from './auth/Components/register/register';
+import { AssignedToMeComponent } from './Pages/assigned-to-me-component/assigned-to-me-component';
+import { ResolvedComponent } from './Pages/resolved-component/resolved-component';
+import { AllComponent } from './Pages/all-component/all-component';
 
 export function initializeApiConfig(apiConfigService: CommonService) {
   return () => apiConfigService.loadConfig();
@@ -52,7 +55,10 @@ export function initializeApiConfig(apiConfigService: CommonService) {
     GroupsComponent,
     ClientComponent,
     IncidentDetailPanelComponent,
-    Register
+    Register,
+    AssignedToMeComponent,
+    ResolvedComponent,
+    AllComponent
   ],
   imports: [
     BrowserModule,
