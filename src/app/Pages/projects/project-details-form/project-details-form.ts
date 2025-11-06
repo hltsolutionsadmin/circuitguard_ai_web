@@ -10,6 +10,7 @@ import { Project, ProjectModel } from '../../services/project';
 import { CommonService } from '../../../Common/services/common-service';
 import { Auth } from '../../../auth/Services/auth';
 import { Assignment, TeamService } from '../../services/team-service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-project-details-form',
@@ -33,6 +34,7 @@ export class ProjectDetailsForm {
 
   projectDetailsForm!: FormGroup;
   private userManagementService = inject(TeamService);
+  private location = inject(Location)
 
   constructor(
     private fb: FormBuilder,
@@ -171,6 +173,7 @@ export class ProjectDetailsForm {
       next: (res: any) => {
         if(res) {
           const responseId = res.data.id
+          window.location.reload();
           this.route.navigate([`/layout/incidents-dashboard/${responseId}`])
            this.isLoading = false;
         this.snackBar.open('Project created successfully!', 'Close', {

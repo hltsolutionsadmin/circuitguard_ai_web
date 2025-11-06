@@ -19,87 +19,122 @@ import { Location } from '@angular/common';
 })
 export class ProjectTicket {
   private fb = inject(FormBuilder);
-  // private dialogRef = inject(MatDialogRef<ProjectTicket>);
   private incidentService = inject(TicketService);
   private commonService = inject(Auth);
   private projectService = inject(Project);
   private snackBar = inject(MatSnackBar);
   private route = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
-
+  private location = inject(Location);
+  private destroy$ = new Subject<void>();
   form!: FormGroup;
   submitting = false;
   projectsLoading = true;
   user: any;
   organization: any;
   projectNames: any[] = [];
-  private location = inject(Location);
-  getCategory : any;
+  getCategory: any;
   getSubCategory: any;
-  private destroy$ = new Subject<void>();
   projectId: any;
+  userDetails: any;
+  subCategoryPageSize = 10;
+  hasMoreSubCategories = false;
+  showSubCategoryDropdown = false;
+  loadingSubcategories = false;
 
-  constructor() {
-  }
   ngOnInit(): void {
     this.form = this.fb.group({
       title: ['', Validators.required],
       description: ['', Validators.required],
       priority: ['LOW', Validators.required], // ← Default "LOW"
       dueDate: [''],
-      projectId: [ this.projectId ],
-      category: [1,Validators.required],
-      subCategory: [1, Validators.required],
+      projectId: [this.projectId],
+      category: [0, Validators.required],
+      subCategory: [0, Validators.required],
       impact: ['LOW', Validators.required],
       urgency: ['LOW', Validators.required],
-
     });
-       this.activatedRoute.paramMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
-        const projectId = params.get('projectId');
-        if (projectId) {
-          this.form.patchValue({ projectId: +projectId });
-          this.form.get('projectId')?.disable();
-          console.log('fmerofjerofj o',projectId);
-          this.projectId = projectId
-        }
-      });
-
-    this.commonService.user$.pipe(
-      filter(user => !!user),
-      take(1)
-    ).subscribe({
-      next: (user) => {
-        this.user = user.id;
-        this.organization = user.organization.id;
-        this.loadProjects();
-        this.getAllTicketCategory();
-        this.getAllTicketSubCategory();
-      },
-      error: () => {
-        this.showError('Failed to load user. Please try again.');
-        this.projectsLoading = false;
+    this.activatedRoute.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params) => {
+      const projectId = params.get('projectId');
+      if (projectId) {
+        this.form.patchValue({ projectId: +projectId });
+        this.form.get('projectId')?.disable();
+        this.projectId = projectId;
       }
     });
+
+    this.commonService.user$
+      .pipe(
+        filter((user) => !!user),
+        take(1)
+      )
+      .subscribe({
+        next: (user) => {
+          if (user.organization) {
+            this.organization = user.organization.id;
+          } 
+            this.user = user.id;
+            this.userDetails = user;
+            this.loadProjects();
+            this.getAllTicketCategory();
+        },
+        error: () => {
+          this.showError('Failed to load user. Please try again.');
+          this.projectsLoading = false;
+        },
+      });
+
+      this.form.get('category')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((categoryId) => {
+        if (categoryId) {
+          this.subCategoryPageSize = 10; // reset pagination
+          this.getAllTicketSubCategory(categoryId, this.subCategoryPageSize);
+        } else {
+           this.showSubCategoryDropdown = false;
+          this.getSubCategory = [];
+          this.form.patchValue({ subCategory: null });
+        }
+      });
   }
 
   loadProjects(): void {
-    if (!this.organization) {
-      this.showError('Organization not found.');
-      this.projectsLoading = false;
-      return;
-    }
+    const userDetails = this.userDetails;
+    if (userDetails.assignmentRoles && userDetails.assignmentRoles.length > 0) {
+      this.projectService.getMyProjects().subscribe({
+        next: (response: ProjectResponse) => {
+          this.projectNames = response?.data?.content || [];
+          this.projectsLoading = false;
 
-    this.projectsLoading = true;
-    this.projectService.getProjects(0, 100, this.organization).subscribe({
-      next: (response: ProjectResponse) => {
-        this.projectNames = response?.data?.content || [];
-        this.projectsLoading = false;
-      },
-      error: (error) => {
-        this.showError('Error loading projects. Please try again.');
-        this.projectsLoading = false;
+          if (this.projectNames.length > 0) {
+            const firstProject = this.projectNames[0];
+            this.projectId = firstProject.id;
+          }
+        },
+        error: () => {
+          this.showError('Error loading projects. Please try again.');
+          this.projectsLoading = false;
+        },
+      });
+    } else {
+      if (!this.organization) {
+        this.showError('Organization not found.');
+        this.projectsLoading = true;
+        return;
       }
-    });
+
+      this.projectsLoading = true;
+      this.projectService.getProjects(0, 100, this.organization).subscribe({
+        next: (response: ProjectResponse) => {
+          this.projectNames = response?.data?.content || [];
+          this.projectsLoading = false;
+        },
+        error: (error) => {
+          this.showError('Error loading projects. Please try again.');
+          this.projectsLoading = false;
+        },
+      });
+    }
   }
 
   onSubmit(): void {
@@ -110,20 +145,19 @@ export class ProjectTicket {
     const selectedProjectId = this.form.value.projectId;
     const selectedPriority = this.projectId;
     const formValue = this.form.getRawValue();
-     console.log(this.form.value.subCategory, this.form.value.subCategory)
+    console.log(this.form.value.subCategory, this.form.value.subCategory);
 
     const payload: any = {
-       title: formValue.title,
-  description: formValue.description,
-  status: 'OPEN',
-  projectId: formValue.projectId,
-  createdById: this.user,
-  archived: false,
-  impact: formValue.impact,
-  urgency: formValue.urgency,
-  subCategoryId: formValue.subCategory,
-  categoryId: formValue.category
-      
+      title: formValue.title,
+      description: formValue.description,
+      status: 'OPEN',
+      projectId: formValue.projectId,
+      createdById: this.user,
+      archived: false,
+      impact: formValue.impact,
+      urgency: formValue.urgency,
+      subCategoryId: formValue.subCategory,
+      categoryId: formValue.category,
     };
 
     this.incidentService.createIncident(payload).subscribe({
@@ -136,16 +170,12 @@ export class ProjectTicket {
         console.error('Create failed:', err);
         this.showError('Failed to create incident. Please try again.');
         this.submitting = false;
-      }
+      },
     });
   }
 
   onCancel(): void {
-    this.route.navigate(['/layout/project'])
-  }
-
-  private formatDate(date: Date): string {
-    return new Date(date).toISOString();
+    this.route.navigate([`/layout/incidents-dashboard/${this.projectId}`]);
   }
 
   private showError(message: string): void {
@@ -153,23 +183,41 @@ export class ProjectTicket {
       duration: 5000,
       horizontalPosition: 'center',
       verticalPosition: 'top',
-      panelClass: ['bg-red-500', 'text-white']
+      panelClass: ['bg-red-500', 'text-white'],
     });
   }
 
   getAllTicketCategory() {
-    this.incidentService.getTicketsCategory(this.organization, 0, 100 ).subscribe({
-      next:(res) => {
-         this.getCategory = res.data.content
-      }
-    })
+    this.incidentService.getTicketsCategory(this.projectId).subscribe({
+      next: (res) => {
+        this.getCategory = res.data.content || [];
+      },
+    });
   }
 
-  getAllTicketSubCategory() {
-    this.incidentService.getTicketsSubCategory(1, 0, 100 ).subscribe({
-      next:(res) => {
-         this.getSubCategory = res.data.content
-      }
-    })
+   getAllTicketSubCategory(categoryId: number, pageSize: number) {
+    this.loadingSubcategories = true;
+    this.incidentService.getTicketsSubCategory(categoryId, 0, pageSize).subscribe({
+      next: (res) => {
+        this.getSubCategory = res.data.content || [];
+        this.hasMoreSubCategories = (res.data.totalElements || 0) > this.getSubCategory.length;
+        this.loadingSubcategories = false;
+      },
+      error: () => {
+        this.loadingSubcategories = false;
+      },
+    });
+  }
+
+   loadMoreSubCategories() {
+    const categoryId = this.form.get('category')?.value;
+    if (!categoryId) return;
+    this.subCategoryPageSize += 10;
+    this.getAllTicketSubCategory(categoryId, this.subCategoryPageSize);
+  }
+
+   ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

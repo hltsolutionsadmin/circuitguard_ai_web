@@ -3,6 +3,7 @@ import { IncidentDisplay } from '../incidents-dashboard';
 import { catchError, of, Subject, takeUntil, tap } from 'rxjs';
 import { CreateTicketDto, TicketService } from '../../services/ticket-service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Auth } from '../../../auth/Services/auth';
 
 
 @Component({
@@ -56,6 +57,7 @@ export class IncidentDetailPanelComponent {
   currentPageSize = 10;
   isLoadingMembers = false;
   hasMoreMembers = false;
+  authService = inject(Auth)
 
   private destroy$ = new Subject<void>();
 

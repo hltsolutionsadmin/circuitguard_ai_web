@@ -12,14 +12,13 @@
 
       <div class="flex items-center space-x-3">
         <!-- Status dropdown (the one bound to incident.status) -->
-        <div class="relative inline-block text-left">
+        <div class="relative flex text-left items-center border-0 focus:ring-2 focus:ring-blue-500 focus:outline-none appearance-none cursor-pointer" style="padding: 0.5;" [ngClass]="getStatusColor(incident.status)">
           <select [(ngModel)]="incident.status" (ngModelChange)="updateStatus($event)"
-            [ngClass]="getStatusColor(incident.status)"
-            class="block py-1 px-3 rounded-md text-sm font-semibold border-0 focus:ring-2 focus:ring-blue-500 focus:outline-none appearance-none cursor-pointer">
-            <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
+            class="block py-1 px-3 rounded-md text-sm font-semibold ">
+            <option *ngFor="let status of statusOptions" [value]="status">{{ status.replace('_', ' ') }}</option>
           </select>
-          <mat-icon
-            class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-600 pointer-events-none">expand_more</mat-icon>
+          <!-- <mat-icon
+            class="">expand_more</mat-icon> -->
         </div>
 
         <!-- Share / More icons -->
@@ -144,7 +143,7 @@
                   {{ getInitials(incident.assignedToName) }} </div> <span class="font-medium truncate">{{
                   incident.assignedToName || 'Not Assigned' }}</span>
               </button>
-              <div *ngIf="showAssigneeDropdown"
+              <div *ngIf="showAssigneeDropdown && !authService.isClientAdmin"
                 class="absolute mt-1 w-60 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-20 max-h-60 overflow-y-auto">
                 <div class="py-1"> <!-- If no members -->
                   <div *ngIf="!MembersList || MembersList.length === 0"

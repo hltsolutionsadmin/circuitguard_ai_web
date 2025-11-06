@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TeamService, User } from '../../services/team-service';
 import { Location } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Auth } from '../../../auth/Services/auth';
 
 @Component({
   selector: 'app-group-members-component',
@@ -26,7 +27,8 @@ groupId: number | null = null;
   private router = inject(Router);
   private groupService = inject(TeamService);
   private Location = inject(Location);
-  private snackBar = inject(MatSnackBar)
+  private snackBar = inject(MatSnackBar);
+  authService = inject(Auth)
   ngOnInit(): void {
     this.groupId = Number(this.route.snapshot.paramMap.get('groupId'));
     this.groupName = this.route.snapshot.paramMap.get('groupName') ?? '';
@@ -66,7 +68,7 @@ groupId: number | null = null;
   removeMember(userId: number): void {
     console.log('Remove user ID:', userId);
     this.groupService.deleteGroupMembers(userId).subscribe({
-      next:() => { this.showSnack('Incident created successfully!'), this.loadPage()}
+      next:() => { this.showSnack('User Removed successfully!'), this.loadPage()}
     })
     this.loadPage(this.currentPage);
   }

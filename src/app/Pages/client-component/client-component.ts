@@ -6,6 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { GroupService } from '../services/group-service';
 import { Location } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
+import { Auth } from '../../auth/Services/auth';
 
 @Component({
   selector: 'app-client-component',
@@ -21,6 +22,7 @@ export class ClientComponent implements OnInit{
    private groupService = inject(GroupService);
    private Location = inject(Location);
    private destroy$ = new Subject<void>();
+    authService = inject(Auth)
    
    projectId : any;
    clients: any;
@@ -37,6 +39,8 @@ export class ClientComponent implements OnInit{
    ngOnInit(): void {
      this.getProjectClients();
    }
+
+   
 
    getProjectClients() {
     this.groupService.getClientMembers(this.projectId).subscribe({

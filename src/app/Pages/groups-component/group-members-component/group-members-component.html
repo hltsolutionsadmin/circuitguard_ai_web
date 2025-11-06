@@ -13,7 +13,7 @@
     
   </div>
 
-  <div class="flex gap-4 mt-4 sm:mt-0">
+  <div class="flex gap-4 mt-4 sm:mt-0" *ngIf="!authService.isClientAdmin && !authService.devloper">
     <button (click)="navigateToTeamSetup()" class="flex items-center gap-2 px-4 py-2 bg-white text-red-600 rounded-lg font-medium hover:bg-gray-100 transition">
       <mat-icon>add</mat-icon>Add Members
     </button>
@@ -50,7 +50,7 @@
           <th class="px-4 py-3">Email</th>
           <!-- <th class="px-4 py-3">Projects</th> -->
           <th class="px-4 py-3">Joined On</th>
-          <th class="px-4 py-3">Action</th>
+          <th class="px-4 py-3" *ngIf="!authService.isClientAdmin && !authService.devloper">Action</th>
         </tr>
       </thead>
       <tbody class="divide-y text-sm">
@@ -70,7 +70,7 @@
           <td class="px-4 py-3 text-gray-600">
             {{ user.roles[0] }}
           </td>
-          <td class="px-4 py-3">
+          <td class="px-4 py-3" *ngIf="!authService.isClientAdmin && !authService.devloper">
             <button (click)="removeMember(user.id)" class="flex items-center gap-1 text-red-600 hover:text-red-800 font-medium text-sm">
               <mat-icon class="text-lg">person_remove</mat-icon> Remove
             </button>

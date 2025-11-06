@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { CommonService } from '../../Common/services/common-service';
 
 export interface CreateTicketDto {
   id?: any;
@@ -10,7 +11,7 @@ export interface CreateTicketDto {
   status: 'OPEN' | 'NEW' | 'ASSIGNED' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED' | 'REOPENED' ;
   projectId: number;
   createdById: number;
-  dueDate?: string; // ISO string
+  dueDate?: string; 
   archived: boolean;
   assignedToId?: number;
 }
@@ -41,7 +42,6 @@ export interface Page<T> {
 }
 
 export interface TicketResponse {
-  // Define if backend returns data
   id?: number;
   message?: string;
 }
@@ -56,48 +56,63 @@ export interface GetTicketsResponse {
   providedIn: 'root'
 })
 export class TicketService {
-  private readonly apiUrl = 'https://fanfun.in/api/usermanagement/tickets';
+  apiConfig = inject(CommonService)
   constructor(private http: HttpClient) {}
 
   createIncident(payload: CreateTicketDto): Observable<TicketResponse> {
-    return this.http.post<TicketResponse>(this.apiUrl, payload);
+    const ticketsEndPointUrl = this.apiConfig.getEndpoint('ticketsEndPoint');
+    return this.http.post<TicketResponse>(ticketsEndPointUrl, payload);
   }
 
   getProjectIncidents(projectId: number, page: number = 0, size: number = 10): Observable<GetTicketsResponse> {
+    const ticketsEndPointUrl = this.apiConfig.getEndpoint('ticketsEndPoint');
     const params = new HttpParams()
       .set('projectId', projectId.toString())
       .set('page', page.toString())
       .set('size', size.toString())
 
-    return this.http.get<GetTicketsResponse>(this.apiUrl, { params });
+    return this.http.get<GetTicketsResponse>(ticketsEndPointUrl, { params });
   }
 
+   getUserIncidents(projectId: number): Observable<GetTicketsResponse> {
+    const ticketsEndPointUrl = this.apiConfig.getEndpoint('ticketsEndPoint');
+    const params = new HttpParams()
+      .set('projectId', projectId.toString())
+
+    return this.http.get<GetTicketsResponse>(`${ticketsEndPointUrl}/by-user`, { params });
+  }
+
+
     getOpenProjectIncidents(projectId: number, page: number = 0, size: number = 10, status?: any): Observable<GetTicketsResponse> {
+      const ticketsEndPointUrl = this.apiConfig.getEndpoint('ticketsEndPoint');
     const params = new HttpParams()
       .set('projectId', projectId.toString())
       .set('page', page.toString())
       .set('size', size.toString())
       .set('status',status)
 
-    return this.http.get<GetTicketsResponse>(this.apiUrl, { params });
+    return this.http.get<GetTicketsResponse>(ticketsEndPointUrl, { params });
   }
 
   getTicketsByPriority(projectId: number, priority: string): Observable<any> {
-  return this.http.get<any>(`https://fanfun.in/api/usermanagement/tickets?projectId=${projectId}&priority=${priority}`);
+    const ticketsEndPointUrl = this.apiConfig.getEndpoint('ticketsEndPoint');
+  return this.http.get<any>(`${ticketsEndPointUrl}?projectId=${projectId}&priority=${priority}`);
 }
 
-getTicketsCategory(organizationId: number, page: number = 0, size: number = 10 ): Observable<any> {
-  return this.http.get<any>(`https://fanfun.in/api/usermanagement/api/categories/org/${organizationId}?page=${page}&size=${size}`);
+getTicketsCategory(projectId: number ): Observable<any> {
+  const createGroupEndPointUrl = this.apiConfig.getEndpoint('createGroupEndPoint');
+  return this.http.get<any>(`${createGroupEndPointUrl}/categories/project/${projectId}`);
 }
 
 getTicketsSubCategory(categoryId: number, page: number = 0, size: number = 10 ): Observable<any> {
-  return this.http.get<any>(`https://fanfun.in/api/usermanagement/api/subcategories/category/${categoryId}?page=${page}&size=${size}`);
+  const createGroupEndPointUrl = this.apiConfig.getEndpoint('createGroupEndPoint');
+  return this.http.get<any>(`${createGroupEndPointUrl}/subcategories/category/${categoryId}?page=${page}&size=${size}`);
 }
 
 postComment(ticketId: number, comment: string): Observable<any> {
-  return this.http.post<any>(
-    `https://fanfun.in/api/usermanagement/tickets/${ticketId}/comments`,
-    { comment }  // backend expects this shape
+  const ticketsEndPointUrl = this.apiConfig.getEndpoint('ticketsEndPoint');
+  return this.http.post<any>(`${ticketsEndPointUrl}/${ticketId}/comments`,
+    { comment } 
   );
 }
 }

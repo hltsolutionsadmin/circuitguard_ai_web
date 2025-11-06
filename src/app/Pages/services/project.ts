@@ -1,7 +1,7 @@
-import { HttpClient, HttpHeaders, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
-import { projectGroupResponse, ProjectResponse } from '../projects/project-model';
+import { ProjectResponse } from '../projects/project-model';
 import { CommonService } from '../../Common/services/common-service';
 
 export interface ProjectModel {
@@ -25,8 +25,6 @@ export interface ProjectModel {
   providedIn: 'root'
 })
 export class Project {
-  private apiUrl = 'https://fanfun.in/api/usermanagement/projects';
-  private baseUrl = 'https://fanfun.in/api/usermanagement/api/usergroups'
   apiConfig = inject(CommonService)
 
   constructor(
@@ -52,16 +50,22 @@ export class Project {
   }
 
    getProjectsByStatus(status: string,organisationId: number): Observable<ProjectResponse> {
-    const url = `${this.apiUrl}?status=${status}&organisationId=${organisationId}`;
+    const projectsEndPointUrl = this.apiConfig.getEndpoint('projectsEndPoint');
+    const url = `${projectsEndPointUrl}?status=${status}&organisationId=${organisationId}`;
     return this.http.get<ProjectResponse>(url);
   }
 
    getProjectById(id: number): Observable<{ message: string, status: string, data: any }> {
-     const projectDetailsUrl = this.apiConfig.getEndpoint('projectsEndPoint');
-    return this.http.get<{ message: string, status: string, data: any }>(`${projectDetailsUrl}/${id}`).pipe(
+     const projectsEndPointUrl = this.apiConfig.getEndpoint('projectsEndPoint');
+    return this.http.get<{ message: string, status: string, data: any }>(`${projectsEndPointUrl}/${id}`).pipe(
       catchError(this.handleError)
     );
   }
+
+  getMyProjects(): Observable<ProjectResponse> {
+    const projectsEndPointUrl = this.apiConfig.getEndpoint('projectsEndPoint');
+  return this.http.get<ProjectResponse>(`${projectsEndPointUrl}/my`);
+}
 
   private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'An error occurred. Please try again later.';

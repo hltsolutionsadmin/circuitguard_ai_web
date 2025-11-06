@@ -8,47 +8,50 @@
     <div class="flex flex-col h-full overflow-y-auto">
       <form action="" [formGroup]="projectForm">
         <div class="relative p-4">
-        <select formControlName="projectId"
-          class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
-          style="background-color: var(--color-gray-800); color: white;">
-          <option value="" disabled>Select Project</option>
-          <option *ngFor="let project of projectNames" [value]="project.id">
-            {{ project.name }}
-          </option>
-        </select>
-        <mat-icon class="absolute right-3 top-9 text-gray-500 pointer-events-none"
-          style="top: 1em; margin-right: .5em; color: white;">arrow_drop_down</mat-icon>
-        <p *ngIf="projectsLoading" class="text-xs text-blue-600 mt-1">Loading projects...</p>
-      </div>
+          <select formControlName="projectId"
+            class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
+            style="background-color: var(--color-gray-800); color: white;">
+            <option value="" disabled>Select Project</option>
+            <option *ngFor="let project of projectNames" [value]="project.id">
+              {{ project.name }}
+            </option>
+          </select>
+          <mat-icon class="absolute right-3 top-9 text-gray-500 pointer-events-none"
+            style="top: 1em; margin-right: .5em; color: white;">arrow_drop_down</mat-icon>
+          <p *ngIf="projectsLoading" class="text-xs text-blue-600 mt-1">Loading projects...</p>
+        </div>
       </form>
       <!-- Search inside sidebar -->
-      
+
 
       <!-- Navigation items -->
       <div class="flex-1 overflow-y-auto pt-0">
         <ng-container *ngFor="let item of navItems">
-          <!-- Top-level item -->
-          <div class="cursor-pointer text-sm transition-colors duration-150" style="background-color: 
+          <ng-container *ngIf="shouldShowNavItem(item)">
+            <!-- Top-level item -->
+            <div class="cursor-pointer text-sm transition-colors duration-150" style="background-color: 
 #3f5060; border-bottom: 1px solid #333;" [class.bg-blue-900]="isActive(item)" [class.text-white]="isActive(item)"
-            [class.text-gray-200]="!isActive(item)" [class.hover:bg-gray-700]="!isActive(item)"
-            [class.border-l-4]="isActive(item)" [class.border-blue-400]="isActive(item)">
-            <div class="px-4 py-2 font-medium flex justify-between items-center" (click)="toggleSubmenu(item)"
-              [routerLink]="item.route">
-              {{ item.label }}
-              <mat-icon *ngIf="item.children" class="text-gray-400 text-sm">
-                {{ item.active ? 'expand_less' : 'expand_more' }}
-              </mat-icon>
+              [class.text-gray-200]="!isActive(item)" [class.hover:bg-gray-700]="!isActive(item)"
+              [class.border-l-4]="isActive(item)" [class.border-blue-400]="isActive(item)">
+              <div class="px-4 py-2 font-medium flex justify-between items-center" (click)="toggleSubmenu(item)"
+                [routerLink]="item.route">
+                {{ item.label }}
+                <mat-icon *ngIf="item.children" class="text-gray-400 text-sm">
+                  {{ item.active ? 'expand_less' : 'expand_more' }}
+                </mat-icon>
+              </div>
             </div>
-          </div>
 
-          <!-- Submenu -->
-          <div *ngIf="item.active && item.children" class="bg-gray-900 text-gray-300">
-            <div *ngFor="let sub of item.children"
-              class="hover:bg-gray-700 cursor-pointer text-sm pl-8 py-1.5 transition-colors duration-150"
-              [class.bg-gray-700]="isActive(sub)" [class.text-white]="isActive(sub)" [routerLink]="sub.route">
-              {{ sub.label }}
+            <!-- Submenu -->
+            <div *ngIf="item.active && item.children" class="bg-gray-900 text-gray-300">
+              <div *ngFor="let sub of item.children"
+                class="hover:bg-gray-700 cursor-pointer text-sm pl-8 py-1.5 transition-colors duration-150"
+                [class.bg-gray-700]="isActive(sub)" [class.text-white]="isActive(sub)" [routerLink]="sub.route">
+                {{ sub.label }}
+              </div>
             </div>
-          </div>
+          </ng-container>
+
         </ng-container>
 
 
@@ -64,7 +67,7 @@
       style="background-color: var(--color-gray-800); padding: 2rem; z-index: 1000;">
       <div class="flex items-center space-x-2">
         <!-- Menu toggle: always visible now -->
-        <button (click)="toggleSidenav()" class="p-1 searchIcon hidden rounded hover:bg-gray-100">
+        <button class="p-1 searchIcon hidden rounded hover:bg-gray-100">
           <mat-icon class="text-gray-600">menu</mat-icon>
         </button>
 
@@ -82,9 +85,8 @@
 
         <!-- User dropdown -->
         <div class="flex items-center space-x-2 cursor-pointer" [matMenuTriggerFor]="userMenu">
-          <span class="text-sm font-medium text-gray-800 hidden sm:block" style="color: white;">{{ user.fullName
-            }}</span>
-          <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-sm">
+          <span class="text-sm font-medium text-gray-800 hidden sm:block" style="color: white;">{{ user?.fullName || 'User Name'}}</span>
+          <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-sm" *ngIf="user">
             {{ getInitials() }}
           </div>
           <mat-icon class="text-white-600 text-xl" style="color: white;">arrow_drop_down</mat-icon>

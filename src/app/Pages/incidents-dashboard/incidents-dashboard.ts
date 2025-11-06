@@ -3,12 +3,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Project } from '../services/project';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Content } from '../projects/project-model';
-import { MatDialog } from '@angular/material/dialog';
-import { ProjectTicket } from './incident-form/project-ticket';
 import { TicketService } from '../services/ticket-service';
-import { Location } from '@angular/common';
-import { GroupService } from '../services/group-service';
 import { Subject, takeUntil } from 'rxjs';
+import { Auth } from '../../auth/Services/auth';
 
 export interface IncidentDisplay {
   id: number;
@@ -65,7 +62,6 @@ export class IncidentsDashboard implements OnInit {
   incidentsError: string | null = null;
   projectId: any;
 
-  // Filter state
   selectedPriority: PriorityFilter = 'ALL';
   private destroy$ = new Subject<void>();
 
@@ -73,10 +69,8 @@ export class IncidentsDashboard implements OnInit {
   private router = inject(Router);
   private projectService = inject(Project);
   private snackBar = inject(MatSnackBar);
-  private dialog = inject(MatDialog);
   private incidentService = inject(TicketService);
-  private Location = inject(Location);
-  private layoutService = inject(GroupService); 
+  authService = inject(Auth)
 
   constructor() {
      this.route.paramMap
@@ -102,7 +96,6 @@ export class IncidentsDashboard implements OnInit {
     this.loadIncidents(); // Defaults to ALL
   }
 
-  // Unified load method based on filter
   loadIncidents(priority?: PriorityFilter): void {
     if (!this.projectId) return;
 
@@ -113,13 +106,14 @@ export class IncidentsDashboard implements OnInit {
 
     if (targetPriority === 'ALL') {
       this.loadAllIncidents();
-    } else {
+    } else if (!this.authService.devloper) {
       this.loadFilteredIncidents(targetPriority);
     }
   }
 
   private loadAllIncidents(): void {
-    this.incidentService
+    if(this.authService.isBusinessAdmin || this.authService.isClientAdmin) {
+       this.incidentService
       .getProjectIncidents(this.projectId, this.pageNumber, this.pageSize)
       .subscribe({
         next: (response) => {
@@ -129,9 +123,24 @@ export class IncidentsDashboard implements OnInit {
           this.incidentsLoading = false;
         },
         error: (error) => {
+          this.incidentsLoading = false;
           this.handleLoadError('Failed to load incidents. Please try again.');
         },
       });
+    } else if (this.authService.devloper) {
+      this.incidentService.getUserIncidents(this.projectId).subscribe({
+        next: (response) => {
+          this.incidents = this.mapApiTicketsToDisplay(response.data.content);
+          this.totalElements = response.data.totalElements;
+          this.pageNumber = response.data.number;
+          this.incidentsLoading = false;
+        },
+        error: (error) => {
+          this.incidentsLoading = false;
+          this.handleLoadError('Failed to load incidents. Please try again.');
+        }
+      });
+    }
   }
 
   private loadFilteredIncidents(priority: Exclude<PriorityFilter, 'ALL'>): void {
@@ -266,25 +275,6 @@ refreshIncident(incidentId: number) {
     }
   });
 }
-
-
-
-
-  openCreateIncidentDialog(): void {
-    // const dialogRef = this.dialog.open(ProjectTicket, {
-    //   width: '800px',
-    //   maxHeight: '90vh',
-    //   data: { projectId: this.project.id },
-    // });
-    // dialogRef.afterClosed().subscribe((result) => {
-    //   if (result === true) {
-    //     this.loadIncidents();
-    //     this.showSnack('Incident created successfully!');
-    //     this.setPriorityFilter(this.selectedPriority);
-    //     this.detailFullPageOpen = false; // Refresh with current filter
-    //   }
-    // });
-  }
 
   priorityClass(priority: string): string {
     switch (priority) {
